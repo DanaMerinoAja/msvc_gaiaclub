@@ -1,5 +1,6 @@
 package org.soygaia.msvc.gaiaclub.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -15,16 +16,20 @@ public class PeriodoEntity implements Serializable {
     private Long id;
 
     @Column(name = "per_fecha_inicio")
-    private LocalDate fecha_inicio;
+    private LocalDate fechaInicio;
     @Column(name = "per_fecha_fin")
-    private LocalDate fecha_fin;
+    private LocalDate fechaFin;
     @Column(name = "per_descripcion")
     private String descripcion;
+    @Column(name = "per_nombre")
+    private String nombre;
     @Column(name = "per_valor_punto")
-    private double valor_punto;
+    private double valorPunto;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recIdPeriodo", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "periodo", fetch = FetchType.LAZY)
     private List<RecompensaEntity> recompensaList;
+
 
     public Long getId() {
         return id;
@@ -42,20 +47,20 @@ public class PeriodoEntity implements Serializable {
         this.id = id;
     }
 
-    public LocalDate getFecha_inicio() {
-        return fecha_inicio;
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
     }
 
-    public void setFecha_inicio(LocalDate fecha_inicio) {
-        this.fecha_inicio = fecha_inicio;
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 
-    public LocalDate getFecha_fin() {
-        return fecha_fin;
+    public LocalDate getFechaFin() {
+        return fechaFin;
     }
 
-    public void setFecha_fin(LocalDate fecha_fin) {
-        this.fecha_fin = fecha_fin;
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
     }
 
     public String getDescripcion() {
@@ -66,11 +71,19 @@ public class PeriodoEntity implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public double getValor_punto() {
-        return valor_punto;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setValor_punto(double valor_punto) {
-        this.valor_punto = valor_punto;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public double getValorPunto() {
+        return valorPunto;
+    }
+
+    public void setValorPunto(double valorPunto) {
+        this.valorPunto = valorPunto;
     }
 }

@@ -14,14 +14,21 @@ public class CanjeEntity {
     private Long id;
 
     //sospechoso
-    @Column(name = "cj_cliente")
-    private long id_cliente;
+    @Column(name = "cj_cliente", nullable = false)
+    private long idCliente;
 
-    @Column(name = "cj_fecha")
+    @Column(name = "cj_fecha", nullable = false)
     private LocalDate fecha;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dcjCanje", fetch = FetchType.LAZY)
-    private List<DetalleCanjeEntity> detalleCanjes;
+    @JoinColumn(name = "cj_recompensa", referencedColumnName = "rec_id")
+    @ManyToOne
+    private RecompensaEntity recompensa;
+
+    @Column(name = "cj_puntosusados", nullable = false)
+    private int puntosUsados;
+
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dcjCanjePadre", fetch = FetchType.LAZY)
+//    private List<DetalleCanjeEntity> detalleCanjes;
 
     public CanjeEntity() {
     }
@@ -34,12 +41,12 @@ public class CanjeEntity {
         this.id = id;
     }
 
-    public long getId_cliente() {
-        return id_cliente;
+    public long getIdCliente() {
+        return idCliente;
     }
 
-    public void setId_cliente(long id_cliente) {
-        this.id_cliente = id_cliente;
+    public void setIdCliente(long idCliente) {
+        this.idCliente = idCliente;
     }
 
     public LocalDate getFecha() {
@@ -50,11 +57,27 @@ public class CanjeEntity {
         this.fecha = fecha;
     }
 
-    public List<DetalleCanjeEntity> getDetalleCanjes() {
-        return detalleCanjes;
+    public RecompensaEntity getRecompensa() {
+        return recompensa;
     }
 
-    public void setDetalleCanjes(List<DetalleCanjeEntity> detalleCanjes) {
-        this.detalleCanjes = detalleCanjes;
+    public void setRecompensa(RecompensaEntity recompensa) {
+        this.recompensa = recompensa;
     }
+
+    public int getPuntosUsados() {
+        return puntosUsados;
+    }
+
+    public void setPuntosUsados(int puntosUsados) {
+        this.puntosUsados = puntosUsados;
+    }
+
+    //    public List<DetalleCanjeEntity> getDetalleCanjes() {
+//        return detalleCanjes;
+//    }
+//
+//    public void setDetalleCanjes(List<DetalleCanjeEntity> detalleCanjes) {
+//        this.detalleCanjes = detalleCanjes;
+//    }
 }

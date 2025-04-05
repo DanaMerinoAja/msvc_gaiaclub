@@ -1,6 +1,10 @@
 package org.soygaia.msvc.gaiaclub.models.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -17,27 +21,39 @@ public class PuntosEntity implements Serializable {
     private int totalPuntos;
 
     @Column(name = "pt_origen")
-    private long idOrigen;
-
+    private Long idOrigen;
     //manejo de relación polimórfica
     @Column(name = "pt_tipo_origen")
-    private String tipoOrigen;
-
+    private TipoOrigen tipoOrigen;
     @Column(name = "pt_fechaemision")
     private LocalDate fechaEmision;
     @Column(name = "pt_fechacaducidad")
     private LocalDate fechaCaducidad;
     @Column(name = "pt_fechacanje")
     private LocalDate fechaCanje;
-
-    @JoinColumn(name = "pt_cliente", referencedColumnName = "c_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private long idCliente;
-
+    @Column(name = "pt_cliente", nullable = false)
+    private Long idCliente;
+    //VIGENTE, CADUCADO, CANJEADO
+    @Enumerated(EnumType.STRING)
     @Column(name = "pt_estado")
-    private String estado;
+    @NotNull
+    private EstadoPuntos estado;
+
     @Column(name = "pt_puntoscanjeados")
     private int puntosCanjeados;
+
+    @AssertTrue(message = "No se pueden canjear puntos en estado VIGENTE")
+    public boolean isPuntosValidos() {
+        return !"VIGENTE".equals(estado) || puntosCanjeados != 0;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public int getTotalPuntos() {
         return totalPuntos;
@@ -47,19 +63,19 @@ public class PuntosEntity implements Serializable {
         this.totalPuntos = totalPuntos;
     }
 
-    public long getIdOrigen() {
+    public Long getIdOrigen() {
         return idOrigen;
     }
 
-    public void setIdOrigen(long idOrigen) {
+    public void setIdOrigen(Long idOrigen) {
         this.idOrigen = idOrigen;
     }
 
-    public String getTipoOrigen() {
+    public TipoOrigen getTipoOrigen() {
         return tipoOrigen;
     }
 
-    public void setTipoOrigen(String tipoOrigen) {
+    public void setTipoOrigen(TipoOrigen tipoOrigen) {
         this.tipoOrigen = tipoOrigen;
     }
 
@@ -87,19 +103,19 @@ public class PuntosEntity implements Serializable {
         this.fechaCanje = fechaCanje;
     }
 
-    public long getIdCliente() {
+    public Long getIdCliente() {
         return idCliente;
     }
 
-    public void setIdCliente(long idCliente) {
+    public void setIdCliente(Long idCliente) {
         this.idCliente = idCliente;
     }
 
-    public String getEstado() {
+    public EstadoPuntos getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoPuntos estado) {
         this.estado = estado;
     }
 
@@ -110,4 +126,13 @@ public class PuntosEntity implements Serializable {
     public void setPuntosCanjeados(int puntosCanjeados) {
         this.puntosCanjeados = puntosCanjeados;
     }
+
+    public enum EstadoPuntos {
+        VIGENTE, CADUCADO, CANJEADO
+    }
+
+    public enum TipoOrigen {
+        COMPRA, BONIFICACION, PROMOCION
+    }
+
 }

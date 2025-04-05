@@ -17,9 +17,9 @@ public class DetalleCanjeEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private RecompensaEntity dcjRecompensa;
 
-    @JoinColumn(name = "dcj_recompensa" , referencedColumnName = "cj_id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private CanjeEntity dcjCanje;
+//    @JoinColumn(name = "dcj_canjePadre" , referencedColumnName = "cj_id")
+//    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+//    private CanjeEntity dcjCanjePadre;
 
     public DetalleCanjeEntity() {
     }
@@ -48,11 +48,11 @@ public class DetalleCanjeEntity {
         this.dcjRecompensa = dcjRecompensa;
     }
 
-    public CanjeEntity getDcjCanje() {
-        return dcjCanje;
-    }
-
-    public void setDcjCanje(CanjeEntity dcjCanje) {
-        this.dcjCanje = dcjCanje;
-    }
+//    public CanjeEntity getDcjCanjePadre() {
+//        return dcjCanjePadre;
+//    }
+//
+//    public void setDcjCanjePadre(CanjeEntity dcjCanjePadre) {
+//        this.dcjCanjePadre = dcjCanjePadre;
+//    }
 }

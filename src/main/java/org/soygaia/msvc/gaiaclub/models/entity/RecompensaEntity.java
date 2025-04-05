@@ -1,79 +1,84 @@
 package org.soygaia.msvc.gaiaclub.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.smallrye.common.constraint.NotNull;
 import jakarta.persistence.*;
-import org.soygaia.msvc.gaiaclub.models.dtos.ProductoDTO;
+
+import java.io.Serializable;
 
 @Entity
 @Table(name = "t_recompensas")
-public class RecompensaEntity {
+public class RecompensaEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rec_id")
-    private Long recId;
+    private Long id;
 
-    @JoinColumn(name = "rec_producto", referencedColumnName = "prd_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ProductoDTO recIdProducto;
+    @Column(name = "rec_producto")
+    private Long idProducto;
 
     @Column(name = "rec_nombre")
-    private String recNombre;
+    private String nombre;
 
     @NotNull
     @Column(name = "rec_puntosreq")
-    private int recPuntosReq;
+    private int puntosRequeridos;
+
+    @Column(name = "rec_aportesoles")
+    private double aporteSoles;
 
     @Column(name = "rec_descripcion")
-    private String recDescripcion;
+    private String descripcion;
 
     @Column(name = "rec_stock")
     private int stock;
 
-    @JoinColumn(name = "rec_periodo", referencedColumnName = "per_id")
+    @JsonIgnore
+    @JoinColumn(name = "rec_periodo", referencedColumnName = "per_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private Long recIdPeriodo;
+    private PeriodoEntity periodo;
 
     public RecompensaEntity() {
     }
 
-    public Long getRecId() {
-        return recId;
+    public Long getId() {
+        return id;
     }
 
-    public void setRecId(Long recId) {
-        this.recId = recId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public ProductoDTO getRecIdProducto() {
-        return recIdProducto;
+    public Long getIdProducto() {
+        return idProducto;
     }
 
-    public void setRecIdProducto(ProductoDTO recIdProducto) {
-        this.recIdProducto = recIdProducto;
+    public void setIdProducto(Long idProducto) {
+        this.idProducto = idProducto;
     }
 
-    public String getRecNombre() {
-        return recNombre;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setRecNombre(String recNombre) {
-        this.recNombre = recNombre;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public int getRecPuntosReq() {
-        return recPuntosReq;
+    public int getPuntosRequeridos() {
+        return puntosRequeridos;
     }
 
-    public void setRecPuntosReq(int recPuntosReq) {
-        this.recPuntosReq = recPuntosReq;
+    public void setPuntosRequeridos(int puntosRequeridos) {
+        this.puntosRequeridos = puntosRequeridos;
     }
 
-    public String getRecDescripcion() {
-        return recDescripcion;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setRecDescripcion(String recDescripcion) {
-        this.recDescripcion = recDescripcion;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public int getStock() {
@@ -84,11 +89,19 @@ public class RecompensaEntity {
         this.stock = stock;
     }
 
-    public Long getRecIdPeriodo() {
-        return recIdPeriodo;
+    public PeriodoEntity getPeriodo() {
+        return periodo;
     }
 
-    public void setRecIdPeriodo(Long recIdPeriodo) {
-        this.recIdPeriodo = recIdPeriodo;
+    public void setPeriodo(PeriodoEntity periodo) {
+        this.periodo = periodo;
+    }
+
+    public double getAporteSoles() {
+        return aporteSoles;
+    }
+
+    public void setAporteSoles(double aporteSoles) {
+        this.aporteSoles = aporteSoles;
     }
 }
