@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.soygaia.msvc.gaiaclub.models.dtos.PuntosRegistroDTO;
 import org.soygaia.msvc.gaiaclub.services.PuntosService;
 
@@ -21,16 +22,14 @@ public class PuntosController {
 
     @POST
     @Path("/registrar")
-    public Response registrarPuntos(@Valid PuntosRegistroDTO dto) {
+    public Response registrarPuntos(@Valid @RequestBody PuntosRegistroDTO dto) {
 
-        return Response.status(Response.Status.CREATED).entity(Map.of(
-                "puntos", puntosService.registrarPuntosIn(dto)
-        )).build();
+        return Response.status(Response.Status.CREATED).entity(puntosService.registrarPuntosIn(dto)).build();
     }
 
     @GET
     @Path("/obtener/{idCliente}")
-    public Response registrarPuntos(@PathParam("idCliente") Long idCliente) {
+    public Response ontenerPuntos(@PathParam("idCliente") Long idCliente) {
         Long totalPuntos = puntosService.getTotalPuntosDisponiblesPorCliente(idCliente);
         if(totalPuntos!= null){
             return Response.status(Response.Status.OK).entity(Map.of(

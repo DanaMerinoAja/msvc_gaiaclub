@@ -14,4 +14,5 @@ public class ProductoDTO {
     private Measure measureShop;
     private Long prdId;
     private List<String> images;
+
 }

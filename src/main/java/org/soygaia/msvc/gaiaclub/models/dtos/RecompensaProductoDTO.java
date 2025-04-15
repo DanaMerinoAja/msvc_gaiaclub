@@ -1,41 +1,95 @@
 package org.soygaia.msvc.gaiaclub.models.dtos;
 
+import java.math.BigDecimal;
+
 public class RecompensaProductoDTO {
 
     private Long recId;
     private Double aporteSoles;
     private String descripcion;
     private Long recProducto;
+    private BigDecimal precioProducto;
     private String nombreRecompensa;
     private int puntosRequeridos;
     private int stock;
     private Long periodoId;
     private String nombreProducto;
     private String slugProducto;
-    private String abreviaturaUnidadMedida;
-    private String nombreUnidadMedida;
+    private String abreviaturaUnidadMedidaPres;
+    private String unidadMedidaVenta;
+    private String presentacion;
+    private String sku;
+    private String marca;
     private String [] imagenUrl;
+    private String cantidadMedida;
 
     // Constructor
+    public String getCantidadMedida() {
+        return cantidadMedida;
+    }
+
+    public void setCantidadMedida(String cantidadMedida) {
+        this.cantidadMedida = cantidadMedida;
+    }
 
 
-    public RecompensaProductoDTO(Long recId, Double aporteSoles, String descripcion, Long recProducto, String nombreRecompensa, int puntosRequeridos, int stock, Long periodoId, String nombreProducto, String slugProducto, String abreviaturaUnidadMedida, String nombreUnidadMedida, String imagenUrls) {
+    public RecompensaProductoDTO(Long recId, Double aporteSoles, String descripcion, Long recProducto, BigDecimal precioProducto, String nombreRecompensa, int puntosRequeridos, int stock, Long periodoId, String nombreProducto, String slugProducto, String abreviaturaUnidadMedidaPres, String nombreUnidadMedida, String presentacion, String sku, String marca, String cantidadMedida, String imagenUrls) {
         this.recId = recId;
         this.aporteSoles = aporteSoles;
         this.descripcion = descripcion;
         this.recProducto = recProducto;
+        this.precioProducto = precioProducto;
         this.nombreRecompensa = nombreRecompensa;
         this.puntosRequeridos = puntosRequeridos;
         this.stock = stock;
         this.periodoId = periodoId;
         this.nombreProducto = nombreProducto;
         this.slugProducto = slugProducto;
-        this.abreviaturaUnidadMedida = abreviaturaUnidadMedida;
-        this.nombreUnidadMedida = nombreUnidadMedida;
+        this.abreviaturaUnidadMedidaPres = abreviaturaUnidadMedidaPres;
+        this.unidadMedidaVenta = nombreUnidadMedida;
+        this.presentacion = presentacion;
+        this.sku = sku;
+        this.cantidadMedida =cantidadMedida;
+        this.marca = marca;
         if (imagenUrls != null && !imagenUrls.isEmpty()) {
             this.imagenUrl = imagenUrls.split(",");
         }
+    }
 
+    public BigDecimal getPrecioProducto() {
+        return precioProducto;
+    }
+
+    public void setPrecioProducto(BigDecimal precioProducto) {
+        this.precioProducto = precioProducto;
+    }
+
+    public String getPresentacion() {
+        return presentacion;
+    }
+
+    public void setPresentacion(String presentacion) {
+        this.presentacion = presentacion;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public void setImagenUrl(String[] imagenUrl) {
+        this.imagenUrl = imagenUrl;
     }
 
     public Long getRecId() { return recId; }
@@ -68,11 +122,11 @@ public class RecompensaProductoDTO {
     public String getSlugProducto() { return slugProducto; }
     public void setSlugProducto(String slugProducto) { this.slugProducto = slugProducto; }
 
-    public String getAbreviaturaUnidadMedida() { return abreviaturaUnidadMedida; }
-    public void setAbreviaturaUnidadMedida(String abreviaturaUnidadMedida) { this.abreviaturaUnidadMedida = abreviaturaUnidadMedida; }
+    public String getAbreviaturaUnidadMedidaPres() { return abreviaturaUnidadMedidaPres; }
+    public void setAbreviaturaUnidadMedidaPres(String abreviaturaUnidadMedidaPres) { this.abreviaturaUnidadMedidaPres = abreviaturaUnidadMedidaPres; }
 
-    public String getNombreUnidadMedida() { return nombreUnidadMedida; }
-    public void setNombreUnidadMedida(String nombreUnidadMedida) { this.nombreUnidadMedida = nombreUnidadMedida; }
+    public String getUnidadMedidaVenta() { return unidadMedidaVenta; }
+    public void setUnidadMedidaVenta(String unidadMedidaVenta) { this.unidadMedidaVenta = unidadMedidaVenta; }
 
     public String[] getImagenUrl() { return imagenUrl; }
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl.split(","); }

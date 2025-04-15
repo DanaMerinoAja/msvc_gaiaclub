@@ -3,25 +3,33 @@ package org.soygaia.msvc.gaiaclub.models.dtos;
 import jakarta.validation.constraints.NotNull;
 
 public class CanjeRequestDTO {
-    @NotNull(message = "El ID del cliente es obligatorio")
-    private Long idCliente;
-
     @NotNull(message = "Debe seleccionar una recompensa")
-    private Long idRecompensa;
+    private Long recompensaId;
+    @NotNull(message = "El ID del cliente es obligatorio")
+    private Long clienteId;
+    private int cantidadRecompensa;
 
-    public Long getIdCliente() {
-        return idCliente;
+    public int getCantidadRecompensa() {
+        return cantidadRecompensa;
     }
 
-    public void setIdCliente(Long idCliente) {
-        this.idCliente = idCliente;
+    public void setCantidadRecompensa(int cantidadRecompensa) {
+        this.cantidadRecompensa = cantidadRecompensa;
     }
 
-    public Long getIdRecompensa() {
-        return idRecompensa;
+    public Long getClienteId() {
+        return clienteId;
     }
 
-    public void setIdRecompensa(Long idRecompensa) {
-        this.idRecompensa = idRecompensa;
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
+    }
+
+    public Long getRecompensaId() {
+        return recompensaId;
+    }
+
+    public void setRecompensaId(Long recompensaId) {
+        this.recompensaId = recompensaId;
     }
 }

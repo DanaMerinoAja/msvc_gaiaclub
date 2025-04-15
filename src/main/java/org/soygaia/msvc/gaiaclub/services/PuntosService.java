@@ -6,9 +6,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.soygaia.msvc.gaiaclub.models.dtos.CanjeDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.OrdenDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.PuntosDisponiblesDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.PuntosRegistroDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.PuntosEntity;
+import org.soygaia.msvc.gaiaclub.repositories.OrdenRepository;
 import org.soygaia.msvc.gaiaclub.repositories.PuntosRepository;
 
 import java.time.LocalDate;
@@ -20,26 +23,56 @@ public class PuntosService {
     @Inject
     PuntosRepository puntosRepository;
 
+    @Inject
+    OrdenRepository ordenRepository;
+
     @PersistenceContext
     EntityManager entityManager;
 
 
 
     @ConfigProperty(name = "gaia.puntos.meses-vigencia", defaultValue = "10")
-    long mesesVigencia;
+    int mesesVigencia;
+    @ConfigProperty(name = "gaia.puntos.puntos-por-compra", defaultValue = "10")
+    int puntosPorCompra;
+    @ConfigProperty(name = "gaia.puntos.valor-de-compra", defaultValue = "10")
+    long valorCompra;
+    @ConfigProperty(name = "gaia.puntos.valor-bienvenida", defaultValue = "5")
+    int bonificacionBienvenida;
 
     public PuntosEntity registrarPuntosIn(PuntosRegistroDTO puntos){
+
         PuntosEntity puntosEntity = new PuntosEntity();
         puntosEntity.setIdCliente(puntos.getIdCliente());
-        puntosEntity.setFechaEmision(puntos.getFechaEmision());
-        puntosEntity.setFechaCaducidad(puntos.getFechaEmision().plusMonths(mesesVigencia));
-        puntosEntity.setEstado(puntosEntity.getFechaCaducidad().isAfter(LocalDate.now()) ? PuntosEntity.EstadoPuntos.VIGENTE: PuntosEntity.EstadoPuntos.CADUCADO);
-        puntosEntity.setTotalPuntos(puntos.getTotalPuntos());
+        puntosEntity.setFechaEmision(LocalDate.now());
+        puntosEntity.setFechaCaducidad(puntosEntity.getFechaEmision().plusMonths(mesesVigencia));
+        puntosEntity.setEstado(
+                //no es realmente necesario
+                puntosEntity.getFechaCaducidad().isAfter(LocalDate.now()) ?
+                        PuntosEntity.EstadoPuntos.VIGENTE: PuntosEntity.EstadoPuntos.CADUCADO);
+
+        try {
+            System.out.print(PuntosEntity.TipoOrigen.COMPRA);
+            if(puntos.getTipoOrigen().equals(PuntosEntity.TipoOrigen.COMPRA.toString())){
+                OrdenDTO ordenDTO = ordenRepository.findOrdenId(puntos.getIdOrigen());
+                puntosEntity.setTotalPuntos((int) Math.ceil(ordenDTO.getTotal()/valorCompra*puntosPorCompra));
+                puntosEntity.setTipoOrigen(PuntosEntity.TipoOrigen.COMPRA);
+            } else {
+                //Verificar si es bienvenida o reseña
+                puntosEntity.setTipoOrigen(PuntosEntity.TipoOrigen.BONIFICACION);
+                puntosEntity.setTotalPuntos(bonificacionBienvenida);
+            }
+        } catch (Exception ex){
+            //enefecto, error
+            System.out.print(ex.getMessage());
+            return null;
+        }
+
         puntosEntity.setPuntosCanjeados(0);
         puntosEntity.setIdOrigen(puntos.getIdOrigen());
-        puntosEntity.setTipoOrigen(PuntosEntity.TipoOrigen.COMPRA);
 
         entityManager.persist(puntosEntity);
+
         return puntosEntity;
     }
 
@@ -62,6 +95,7 @@ public class PuntosService {
     }
 
     public void canjearPuntos(Long clienteId, int puntosACanjear) {
+
         List<PuntosEntity> disponibles = getPuntosVigentesOrdenados(clienteId);
 
         int puntosRestantes = puntosACanjear;
@@ -70,7 +104,7 @@ public class PuntosService {
             int disponiblesEnRegistro = punto.getTotalPuntos();
 
             if (puntosRestantes >= disponiblesEnRegistro) {
-                punto.setPuntosCanjeados(punto.getTotalPuntos());
+                punto.setPuntosCanjeados(disponiblesEnRegistro);
                 punto.setEstado(PuntosEntity.EstadoPuntos.CANJEADO);
                 punto.setFechaCanje(LocalDate.now());
                 puntosRestantes -= disponiblesEnRegistro;

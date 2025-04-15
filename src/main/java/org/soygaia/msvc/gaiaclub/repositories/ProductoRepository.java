@@ -16,7 +16,7 @@ public class ProductoRepository {
 
     public List<ProductoDTO> findProductosByIds(List<Long> productoIds) {
         return entityManager.createQuery(
-                        "SELECT new org.soygaia.msvc.gaiaclub.models.dtos.ProductoDTO(p.id, p.nombre, p.descripcion) " +
+                        "SELECT new ProductoDTO(p.id, p.nombre, p.descripcion) " +
                                 "FROM Producto p WHERE p.id IN :productoIds", ProductoDTO.class)
                 .setParameter("productoIds", productoIds)
                 .getResultList();
