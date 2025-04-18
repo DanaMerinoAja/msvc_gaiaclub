@@ -6,13 +6,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.soygaia.msvc.gaiaclub.models.dtos.CanjeDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.CanjeRequestDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.CanjesRequestDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.UltiCanjeDTO;
+import org.hibernate.service.spi.ServiceException;
+import org.soygaia.msvc.gaiaclub.config.properties.ErrorCode;
+import org.soygaia.msvc.gaiaclub.models.dtos.*;
 import org.soygaia.msvc.gaiaclub.models.entity.CanjeEntity;
-import org.soygaia.msvc.gaiaclub.models.entity.RecompensaEntity;
-import org.soygaia.msvc.gaiaclub.repositories.CanjeRepository;
+import org.soygaia.msvc.gaiaclub.models.entity.DetalleCanjeEntity;
+import org.soygaia.msvc.gaiaclub.repositories.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,48 +27,69 @@ public class CanjeService {
     CanjeRepository canjeRepository;
 
     @Inject
-    RecompensaService recompensaService;
+    RecompensaRepository recompensaRepository;
+
+    @Inject
+    PeriodoRepository periodoRepository;
+
+    @Inject
+    DetalleCanjeRepository detalleCanjeRepository;
 
     @PersistenceContext
     EntityManager entityManager;
 
+    @Inject
+    MiembroRepository miembroRepository;
 
-    public CanjeDTO registrarCanje(CanjeRequestDTO canjeDTO) {
-        // 1. Verificar recompensa y disponibilidad
-        RecompensaEntity recompensa = recompensaService.obtenerRecompensaValida(canjeDTO.getRecompensaId());
+    public CanjeEntity registrarCanje(@Valid CanjeRequestDTO canje) {
 
-        // 2. Canjear puntos (con la lógica implementada en PuntosService)
-        puntosService.canjearPuntos(canjeDTO.getClienteId(), recompensa.getPuntosRequeridos()* canjeDTO.getCantidadRecompensa());
-        // 3. Registrar el canje
-        CanjeEntity canje = new CanjeEntity();
-        canje.setIdCliente(canje.getIdCliente());
-        canje.setRecompensa(recompensa);
-        canje.setFecha(LocalDate.now());
-        canje.setPuntosCanjeados(recompensa.getPuntosRequeridos());
-        canjeRepository.persist(canje);
+        List<DetalleCanje> detalleCanjes = canje.getDetallesCanje();
 
-        // 4. Restar stock
-        recompensa.setStock(recompensa.getStock() - canjeDTO.getCantidadRecompensa());
-        return new CanjeDTO(
-                recompensa.getNombre(),
-                canje.getPuntosCanjeados(),
-                canje.getFecha(),
-                recompensa.getStock(),
-                "¡Canje exitoso!"
-        );
-    }
-
-    public List<CanjeDTO> registrarCanjes(@Valid CanjesRequestDTO dtos) {
-        List<CanjeDTO> canjesRegitrados = new ArrayList<>();
-        if(dtos.getTotalPuntos()<= puntosService.getTotalPuntosDisponiblesPorCliente(dtos.getClienteId())){
-            for (CanjeRequestDTO dto : dtos.getCanjeRequestDTOS()){
-                canjesRegitrados.add(registrarCanje(dto));
-            }
+        if(detalleCanjes == null) {
+            throw new ServiceException(ErrorCode.CANJE_DETAIL_NULL.getCode() + ": " + ErrorCode.CANJE_DETAIL_NULL.getDescription());
         }
-        return canjesRegitrados;
+        if(detalleCanjes.isEmpty()) {
+            throw new ServiceException(ErrorCode.CANJE_DETAIL_NULL.getCode() + ": " + ErrorCode.CANJE_DETAIL_NULL.getDescription());
+        }
+        if(puntosService.getTotalPuntosDisponiblesPorCliente(canje.getMiembroId()) < canje.getTotalPuntos()){
+            throw new ServiceException(ErrorCode.PUNTOS_INSUFICIENTES.getCode() + ": " + ErrorCode.PUNTOS_INSUFICIENTES.getDescription());
+        }
+
+        try{
+            CanjeEntity canjeEntity = new CanjeEntity();
+
+            canjeEntity.setMiembro(miembroRepository.findById(canje.getMiembroId()));
+            canjeEntity.setFecha(LocalDate.now());
+            canjeEntity.setPeriodo(periodoRepository.findById(canje.getPeriodo()));
+
+            canjeRepository.persist(canjeEntity);
+
+            puntosService.canjearPuntos(canje.getMiembroId(), canje.getTotalPuntos());
+
+            for(DetalleCanje detalleCanje : canje.getDetallesCanje()){
+                DetalleCanjeEntity detalleCanjeEntity = new DetalleCanjeEntity();
+
+                detalleCanjeEntity.setDcjCanjePadre(canjeEntity);
+                detalleCanjeEntity.setCantidadRecompensa(detalleCanje.getCantidadRecompensa());
+                detalleCanjeEntity.setPuntosDetCanje(detalleCanje.getPuntosDetCanje());
+                detalleCanjeEntity.setDcjRecompensa(recompensaRepository.findById(detalleCanje.getRecompensaId()));
+
+                detalleCanjeRepository.persist(detalleCanjeEntity);
+            }
+
+            entityManager.flush();
+            entityManager.refresh(canjeEntity);
+
+            return canjeEntity;
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new ServiceException(ErrorCode.REGISTER_CANJE_FAILED.getCode()+ ": " + ErrorCode.REGISTER_CANJE_FAILED.getDescription(),e);
+        }
     }
 
-    public List<UltiCanjeDTO> ultimosCanjesCliente(Long idCliente) {
+    public List<UltimosCanjesDTO> ultimosCanjesCliente(Long miembroId, Long periodoId) {
+        List<DetalleCanjeEntity> detalleCanjes = detalleCanjeRepository.canjesPorPeriodo(periodoId, miembroId);
         return new ArrayList<>();
     }
 }

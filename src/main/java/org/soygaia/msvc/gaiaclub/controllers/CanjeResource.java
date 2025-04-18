@@ -7,13 +7,10 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
-import org.soygaia.msvc.gaiaclub.models.dtos.CanjeDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.CanjeRequestDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.CanjesRequestDTO;
+import org.soygaia.msvc.gaiaclub.models.entity.CanjeEntity;
 import org.soygaia.msvc.gaiaclub.services.CanjeService;
 
-import java.lang.annotation.Annotation;
-import java.net.URI;
 import java.util.*;
 
 @Path("/canjes")
@@ -27,25 +24,23 @@ public class CanjeResource {
 
     @POST
     @Transactional
-    public Response registrarCanje(@Valid @RequestBody CanjesRequestDTO dtos) {
+    public Response registrarCanje(@Valid @RequestBody CanjeRequestDTO dto) {
         try {
-
-            List<CanjeDTO> canjeDTOS = canjeService.registrarCanjes(dtos);
-            if(canjeDTOS.isEmpty()){
-                return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("mensaje", "No cuenta con los puntos suficentes")).build();
-            }
-            return Response.ok(canjeDTOS).build();
+            CanjeEntity canjeEntity = canjeService.registrarCanje(dto);
+            return Response.ok(canjeEntity).build();
         } catch (IllegalStateException stockRecompensaException){
             return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("mensaje","Stock de recompensa agotado")).build();
         } catch (NotFoundException recompensaNoExiste){
             return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("mensaje","Recompensa no existe")).build();
+        } catch (Exception ex) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("mensaje",ex.getMessage())).build();
         }
     }
 
     @GET
-    @Path("/ultimoscanjes-cliente/{idCliente}")
-    public Response ultimosCanjes(@PathParam("idCliente") Long idCliente){
-        canjeService.ultimosCanjesCliente(idCliente);
+    @Path("/ultimoscanjes-cliente/{idCliente}/{idPeriodo}")
+    public Response ultimosCanjes(@PathParam("idMiembro") Long idMiembro, @PathParam("idPeriodo") Long idPeriodo){
+        canjeService.ultimosCanjesCliente(idPeriodo, idMiembro);
         return Response.ok().build();
     }
 }

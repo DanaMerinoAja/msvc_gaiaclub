@@ -23,7 +23,6 @@ public class PuntosController {
     @POST
     @Path("/registrar")
     public Response registrarPuntos(@Valid @RequestBody PuntosRegistroDTO dto) {
-
         return Response.status(Response.Status.CREATED).entity(puntosService.registrarPuntosIn(dto)).build();
     }
 

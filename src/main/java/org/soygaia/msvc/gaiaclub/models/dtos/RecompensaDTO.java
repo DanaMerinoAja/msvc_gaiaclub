@@ -1,20 +1,23 @@
 package org.soygaia.msvc.gaiaclub.models.dtos;
 
 public class RecompensaDTO {
-    private Long idProducto;
+
+    private Long idRecompensa;
     private Long idPeriodo;
     private String nombre;
-    private double aporteSoles;
-    private int puntosRequeridos;
-    private int stock;
+    private String tipoRecompensa;
+    private Double aporteSoles;
+    private Integer puntosRequeridos;
+    private Integer stock;
     private String descripcion;
+    private Integer vigencia;
 
-    public Long getIdProducto() {
-        return idProducto;
+    public Long getIdRecompensa() {
+        return idRecompensa;
     }
 
-    public void setIdProducto(Long id) {
-        this.idProducto = id;
+    public void setIdRecompensa(Long idRecompensa) {
+        this.idRecompensa = idRecompensa;
     }
 
     public Long getIdPeriodo() {
@@ -33,19 +36,35 @@ public class RecompensaDTO {
         this.nombre = nombre;
     }
 
-    public double getAporteSoles() {
+    public String getTipoRecompensa() {
+        return tipoRecompensa;
+    }
+
+    public void setTipoRecompensa(String tipoRecompensa) {
+        this.tipoRecompensa = tipoRecompensa;
+    }
+
+    public Double getAporteSoles() {
         return aporteSoles;
     }
 
-    public void setAporteSoles(double aporteSoles) {
+    public void setAporteSoles(Double aporteSoles) {
         this.aporteSoles = aporteSoles;
     }
 
-    public int getStock() {
+    public Integer getPuntosRequeridos() {
+        return puntosRequeridos;
+    }
+
+    public void setPuntosRequeridos(Integer puntosRequeridos) {
+        this.puntosRequeridos = puntosRequeridos;
+    }
+
+    public Integer getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 
@@ -57,11 +76,11 @@ public class RecompensaDTO {
         this.descripcion = descripcion;
     }
 
-    public int getPuntosRequeridos() {
-        return puntosRequeridos;
+    public Integer getVigencia() {
+        return vigencia;
     }
 
-    public void setPuntosRequeridos(int puntosRequeridos) {
-        this.puntosRequeridos = puntosRequeridos;
+    public void setVigencia(Integer vigencia) {
+        this.vigencia = vigencia;
     }
 }

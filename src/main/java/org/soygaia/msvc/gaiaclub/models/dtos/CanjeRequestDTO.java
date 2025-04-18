@@ -1,35 +1,50 @@
 package org.soygaia.msvc.gaiaclub.models.dtos;
 
-import jakarta.validation.constraints.NotNull;
+import java.util.List;
 
 public class CanjeRequestDTO {
-    @NotNull(message = "Debe seleccionar una recompensa")
-    private Long recompensaId;
-    @NotNull(message = "El ID del cliente es obligatorio")
-    private Long clienteId;
-    private int cantidadRecompensa;
+    private int totalPuntos;
+    private Long miembroId;
+    private Long periodo;
+    private List<DetalleCanje> detallesCanje;
 
-    public int getCantidadRecompensa() {
-        return cantidadRecompensa;
+    public Long getMiembroId() {
+        return miembroId;
     }
 
-    public void setCantidadRecompensa(int cantidadRecompensa) {
-        this.cantidadRecompensa = cantidadRecompensa;
+    public void setMiembroId(Long miembroId) {
+        this.miembroId = miembroId;
     }
 
-    public Long getClienteId() {
-        return clienteId;
+    public List<DetalleCanje> getCanjeRequestDTOS() {
+        return detallesCanje;
     }
 
-    public void setClienteId(Long clienteId) {
-        this.clienteId = clienteId;
+    public Long getPeriodo() {
+        return periodo;
     }
 
-    public Long getRecompensaId() {
-        return recompensaId;
+    public void setPeriodo(Long periodo) {
+        this.periodo = periodo;
     }
 
-    public void setRecompensaId(Long recompensaId) {
-        this.recompensaId = recompensaId;
+    public List<DetalleCanje> getDetallesCanje() {
+        return detallesCanje;
+    }
+
+    public void setDetallesCanje(List<DetalleCanje> detallesCanje) {
+        this.detallesCanje = detallesCanje;
+    }
+
+    public void setCanjeRequestDTOS(List<DetalleCanje> canjeRequestDTOS) {
+        this.detallesCanje = canjeRequestDTOS;
+    }
+
+    public int getTotalPuntos() {
+        return totalPuntos;
+    }
+
+    public void setTotalPuntos(int totalPuntos) {
+        this.totalPuntos = totalPuntos;
     }
 }

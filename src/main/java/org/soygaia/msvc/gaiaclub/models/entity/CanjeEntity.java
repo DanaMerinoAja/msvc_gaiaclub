@@ -3,6 +3,7 @@ package org.soygaia.msvc.gaiaclub.models.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name="t_canjes")
@@ -12,39 +13,29 @@ public class CanjeEntity {
     @Column(name = "cj_id")
     private Long id;
 
-    //sospechoso
-    @Column(name = "cj_cliente", nullable = false)
-    private long idCliente;
+    @JoinColumn(name = "cj_miembro", referencedColumnName = "mc_id")
+    @ManyToOne
+    private MiembroClubEntity miembro;
 
     @Column(name = "cj_fecha", nullable = false)
     private LocalDate fecha;
-
-    @JoinColumn(name = "cj_recompensa", referencedColumnName = "rec_id")
-    @ManyToOne
-    private RecompensaEntity recompensa;
 
     @JoinColumn(name = "cj_periodo", referencedColumnName = "per_id")
     @ManyToOne
     private PeriodoEntity periodo;
 
-    @Column(name = "cj_puntoscanjeados", nullable = false)
-    private int puntosCanjeados;
-
-    @Column(name = "cj_cantidadrec", nullable = false)
-    private int cantidadRecompensa;
-
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dcjCanjePadre", fetch = FetchType.LAZY)
-//    private List<DetalleCanjeEntity> detalleCanjes;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dcjCanjePadre", fetch = FetchType.LAZY)
+    private List<DetalleCanjeEntity> detallesCanje;
 
     public CanjeEntity() {
     }
 
-    public int getCantidadRecompensa() {
-        return cantidadRecompensa;
+    public List<DetalleCanjeEntity> getDetallesCanje() {
+        return detallesCanje;
     }
 
-    public void setCantidadRecompensa(int cantidadRecompensa) {
-        this.cantidadRecompensa = cantidadRecompensa;
+    public void setDetallesCanje(List<DetalleCanjeEntity> detallesCanje) {
+        this.detallesCanje = detallesCanje;
     }
 
     public PeriodoEntity getPeriodo() {
@@ -63,12 +54,12 @@ public class CanjeEntity {
         this.id = id;
     }
 
-    public long getIdCliente() {
-        return idCliente;
+    public MiembroClubEntity getMiembro() {
+        return miembro;
     }
 
-    public void setIdCliente(long idCliente) {
-        this.idCliente = idCliente;
+    public void setMiembro(MiembroClubEntity miembro) {
+        this.miembro = miembro;
     }
 
     public LocalDate getFecha() {
@@ -78,28 +69,4 @@ public class CanjeEntity {
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
-
-    public RecompensaEntity getRecompensa() {
-        return recompensa;
-    }
-
-    public void setRecompensa(RecompensaEntity recompensa) {
-        this.recompensa = recompensa;
-    }
-
-    public int getPuntosCanjeados() {
-        return puntosCanjeados;
-    }
-
-    public void setPuntosCanjeados(int puntosCanjeados) {
-        this.puntosCanjeados = puntosCanjeados;
-    }
-
-    //    public List<DetalleCanjeEntity> getDetalleCanjes() {
-//        return detalleCanjes;
-//    }
-//
-//    public void setDetalleCanjes(List<DetalleCanjeEntity> detalleCanjes) {
-//        this.detalleCanjes = detalleCanjes;
-//    }
 }

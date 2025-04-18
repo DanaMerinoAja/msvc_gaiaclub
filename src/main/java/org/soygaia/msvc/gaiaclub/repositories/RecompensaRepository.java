@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.soygaia.msvc.gaiaclub.models.dtos.RecompensaDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.RecompensaProductoDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.RecompensaEntity;
+import org.soygaia.msvc.gaiaclub.models.entity.ValeEntity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,7 +22,14 @@ public class RecompensaRepository implements PanacheRepository<RecompensaEntity>
     @Inject
     EntityManager entityManager;
 
-    public List<RecompensaProductoDTO> findByPeriodo(Long periodoId){
+    public List<ValeEntity> findValesPorPeriodo(Long periodoId) {
+        return entityManager
+                .createQuery("SELECT r FROM ValeEntity r WHERE r.periodoId = :periodoId", ValeEntity.class)
+                .setParameter("periodoId", periodoId)
+                .getResultList();
+    }
+
+    public List<RecompensaProductoDTO> findProductosByPeriodo(Long periodoId){
         String sql = "SELECT\n" +
                 "    rec.rec_id, \n" +
                 "    rec.rec_aportesoles, \n" +
@@ -56,7 +64,7 @@ public class RecompensaRepository implements PanacheRepository<RecompensaEntity>
                 "    rec.rec_aportesoles,\n" +
                 "    rec.rec_descripcion,\n" +
                 "    rec.rec_producto, \n" +
-                "\tppv.pvt_preciomaximo,\n" +
+                "    ppv.pvt_preciomaximo,\n" +
                 "    rec.rec_nombre,\n" +
                 "    rec.rec_puntosreq,\n" +
                 "    rec.rec_stock,\n" +

@@ -31,8 +31,10 @@ public class PuntosEntity implements Serializable {
     private LocalDate fechaCaducidad;
     @Column(name = "pt_fechacanje")
     private LocalDate fechaCanje;
-    @Column(name = "pt_cliente", nullable = false)
-    private Long idCliente;
+
+    @JoinColumn(name = "pt_miembro", referencedColumnName = "mc_id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private MiembroClubEntity miembro;
     //VIGENTE, CADUCADO, CANJEADO
     @Enumerated(EnumType.STRING)
     @Column(name = "pt_estado")
@@ -103,12 +105,12 @@ public class PuntosEntity implements Serializable {
         this.fechaCanje = fechaCanje;
     }
 
-    public Long getIdCliente() {
-        return idCliente;
+    public MiembroClubEntity getMiembro() {
+        return miembro;
     }
 
-    public void setIdCliente(Long idCliente) {
-        this.idCliente = idCliente;
+    public void setMiembro(MiembroClubEntity miembro) {
+        this.miembro = miembro;
     }
 
     public EstadoPuntos getEstado() {

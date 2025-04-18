@@ -10,8 +10,8 @@ import java.util.List;
 @ApplicationScoped
 @Transactional
 public class CanjeRepository implements PanacheRepository<CanjeEntity> {
-    public List<CanjeEntity> canjesPorPeriodo(Long periodoId) {
-        return find("periodo.id", periodoId).list();
+    public List<CanjeEntity> canjesPorPeriodo(Long periodoId, Long miembroId) {
+        return find("SELECT c FROM CanjeEntity c WHERE c.periodo.id = :periodoId AND c.miembro = :miembroId","periodoId", periodoId, "miembroId", miembroId).list();
     }
 
 }

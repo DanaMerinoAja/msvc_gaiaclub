@@ -7,54 +7,36 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "t_recompensas")
-public class RecompensaEntity implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rec_id")
-    private Long id;
+@Table(name = "t_recompensas", schema = "gaiaadm")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "rec_tipo", discriminatorType = DiscriminatorType.STRING)
+public abstract class RecompensaEntity {
 
-    @Column(name = "rec_producto")
-    private Long idProducto;
+    @Id
+    @Column(name = "rec_id")
+    private Long recId;
 
     @Column(name = "rec_nombre")
     private String nombre;
 
-    @NotNull
-    @Column(name = "rec_puntosreq")
-    private int puntosRequeridos;
-
-    @Column(name = "rec_aportesoles")
-    private double aporteSoles;
-
     @Column(name = "rec_descripcion")
     private String descripcion;
 
+    @Column(name = "rec_puntosreq")
+    private Integer puntosRequeridos;
+
     @Column(name = "rec_stock")
-    private int stock;
+    private Integer stock;
 
-    @JsonIgnore
-    @JoinColumn(name = "rec_periodo", referencedColumnName = "per_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private PeriodoEntity periodo;
+    @Column(name = "rec_periodo")
+    private Long periodoId;
 
-    public RecompensaEntity() {
+    public Long getRecId() {
+        return recId;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getIdProducto() {
-        return idProducto;
-    }
-
-    public void setIdProducto(Long idProducto) {
-        this.idProducto = idProducto;
+    public void setRecId(Long recId) {
+        this.recId = recId;
     }
 
     public String getNombre() {
@@ -65,14 +47,6 @@ public class RecompensaEntity implements Serializable {
         this.nombre = nombre;
     }
 
-    public int getPuntosRequeridos() {
-        return puntosRequeridos;
-    }
-
-    public void setPuntosRequeridos(int puntosRequeridos) {
-        this.puntosRequeridos = puntosRequeridos;
-    }
-
     public String getDescripcion() {
         return descripcion;
     }
@@ -81,27 +55,28 @@ public class RecompensaEntity implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public int getStock() {
+    public Integer getPuntosRequeridos() {
+        return puntosRequeridos;
+    }
+
+    public void setPuntosRequeridos(Integer puntosRequeridos) {
+        this.puntosRequeridos = puntosRequeridos;
+    }
+
+    public Integer getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 
-    public PeriodoEntity getPeriodo() {
-        return periodo;
+    public Long getPeriodoId() {
+        return periodoId;
     }
 
-    public void setPeriodo(PeriodoEntity periodo) {
-        this.periodo = periodo;
-    }
-
-    public double getAporteSoles() {
-        return aporteSoles;
-    }
-
-    public void setAporteSoles(double aporteSoles) {
-        this.aporteSoles = aporteSoles;
+    public void setPeriodoId(Long periodoId) {
+        this.periodoId = periodoId;
     }
 }
+
