@@ -35,7 +35,7 @@ public class PuntosEntity implements Serializable {
     @JoinColumn(name = "pt_miembro", referencedColumnName = "mc_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private MiembroClubEntity miembro;
-    //VIGENTE, CADUCADO, CANJEADO
+    //VIGENTE, CADUCADO, CANJEADO, DEVUELTO
     @Enumerated(EnumType.STRING)
     @Column(name = "pt_estado")
     @NotNull
@@ -43,10 +43,15 @@ public class PuntosEntity implements Serializable {
 
     @Column(name = "pt_puntoscanjeados")
     private int puntosCanjeados;
+    @Column(name = "pt_canje")
+    private Long canje;
 
-    @AssertTrue(message = "No se pueden canjear puntos en estado VIGENTE")
-    public boolean isPuntosValidos() {
-        return !"VIGENTE".equals(estado) || puntosCanjeados != 0;
+    public Long getCanje() {
+        return canje;
+    }
+
+    public void setCanje(Long canje) {
+        this.canje = canje;
     }
 
     public Long getId() {
@@ -130,7 +135,7 @@ public class PuntosEntity implements Serializable {
     }
 
     public enum EstadoPuntos {
-        VIGENTE, CADUCADO, CANJEADO
+        VIGENTE, CADUCADO, CANJEADO, DEVUELTO
     }
 
     public enum TipoOrigen {

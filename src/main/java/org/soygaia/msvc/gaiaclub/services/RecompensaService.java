@@ -5,14 +5,18 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
-import org.soygaia.msvc.gaiaclub.models.dtos.*;
+import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.RecompensaDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.RecompensaResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.RecompensasResponseDTOF;
+import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.productos.RecompensaProductoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.vales.RecompensaValeDTO;
+import org.soygaia.msvc.gaiaclub.models.entity.PeriodoEntity;
 import org.soygaia.msvc.gaiaclub.models.entity.RecompensaEntity;
 import org.soygaia.msvc.gaiaclub.models.entity.RecompensaProductoEntity;
 import org.soygaia.msvc.gaiaclub.models.entity.ValeEntity;
 import org.soygaia.msvc.gaiaclub.repositories.PeriodoRepository;
 import org.soygaia.msvc.gaiaclub.repositories.ProductoRepository;
 import org.soygaia.msvc.gaiaclub.repositories.RecompensaRepository;
-import org.soygaia.msvc.gaiaclub.repositories.ValeRepository;
 
 import java.util.List;
 
@@ -28,27 +32,11 @@ public class RecompensaService {
     @Inject
     ProductoRepository productoRepository;
 
-    @Inject
-    ValeRepository valeRepository;
-
     @PersistenceContext
     EntityManager entityManager;
 
 
     public RecompensaResponseDTO guardarRecompensa(RecompensaDTO recompensaDTO) {
-
-        // Verificar duplicados
-        List<RecompensaEntity> recompensasDuplicadas = recompensaRepository.find(
-                "SELECT r FROM RecompensaEntity r WHERE r.periodoId = ?1 AND r.recompensaId = ?2 AND TYPE(r) = ?3",
-                recompensaDTO.getIdPeriodo(),
-                recompensaDTO.getIdRecompensa(),
-                recompensaDTO.getTipoRecompensa().equals("VALE") ? ValeEntity.class : RecompensaProductoEntity.class
-        ).list();
-
-        if (!recompensasDuplicadas.isEmpty()) {
-            return new RecompensaResponseDTO(recompensasDuplicadas, null, false);
-        }
-
         // Crear la instancia según tipo
         RecompensaEntity recompensa;
         if (recompensaDTO.getTipoRecompensa().equals("VALE")) {
@@ -59,36 +47,38 @@ public class RecompensaService {
             vale.setDescripcion("Vigencia por " + recompensaDTO.getVigencia() + " días desde el canje.");
             recompensa = vale;
         } else {
+            // Verificar duplicados
+            List<RecompensaEntity> recompensasDuplicadas = recompensaRepository.find(
+                    "SELECT r FROM RecompensaEntity r WHERE r.periodo.id = ?1 AND r.productoId = ?2 AND TYPE(r) = ?3",
+                    recompensaDTO.getIdPeriodo(),
+                    recompensaDTO.getIdProducto(),
+                    recompensaDTO.getTipoRecompensa().equals("VALE") ? ValeEntity.class : RecompensaProductoEntity.class
+            ).list();
+
+            if (!recompensasDuplicadas.isEmpty()) {
+                return new RecompensaResponseDTO(recompensasDuplicadas, null, false);
+            }
+
             RecompensaProductoEntity producto = new RecompensaProductoEntity();
             producto.setAporteSoles(recompensaDTO.getAporteSoles());
-            producto.setProductoId(recompensaDTO.getIdRecompensa());
+            producto.setProductoId(recompensaDTO.getIdProducto());
             producto.setNombre(recompensaDTO.getNombre());
             producto.setDescripcion(recompensaDTO.getDescripcion());
+            producto.setStock(recompensaDTO.getStock());
             recompensa = producto;
         }
 
         // Comunes para ambos
         recompensa.setPuntosRequeridos(recompensaDTO.getPuntosRequeridos());
-        recompensa.setStock(recompensaDTO.getStock());
-        recompensa.setPeriodoId(recompensaDTO.getIdPeriodo());
+        recompensa.setPeriodo(periodoRepository.findById(recompensaDTO.getIdPeriodo()));
 
         recompensaRepository.persist(recompensa);
         return new RecompensaResponseDTO(null, recompensa, true);
     }
 
-
     public void eliminarRecompensa(RecompensaEntity recompensa){
         recompensaRepository.delete(recompensa);
     }
-
-//    public void modificarRecompensa(RecompensaEntity recompensa, Long idRecomOrg){
-//        RecompensaEntity recompensaEntity = recompensaRepository.findById(idRecomOrg);
-//        if(recompensa.getRecompensa()!=null) recompensaEntity.setRecompensa(recompensa.getRecompensa());
-//        if(!recompensa.getNombre().isBlank()) recompensaEntity.setNombre(recompensa.getNombre());
-//        if(recompensa.getStock()>=0) recompensaEntity.setStock(recompensa.getStock());
-//        if(!recompensa.getDescripcion().isBlank()) recompensaEntity.setDescripcion(recompensa.getDescripcion());
-//
-//    }
 
     public void agregarStock(Long idRecompensa, int addUnits){
         RecompensaEntity recompensa = recompensaRepository.findById(idRecompensa);
@@ -99,17 +89,6 @@ public class RecompensaService {
         RecompensaEntity recompensa = recompensaRepository.findById(idRecompensa);
         recompensa.setStock(recompensa.getStock()-minusUnits);
     }
-
-//    public void modificarValorRecompensa(Long idRecompensa, double aporteSoles, int puntosRequeridos){
-//        RecompensaEntity recompensa = recompensaRepository.findById(idRecompensa);
-//        recompensa.setPuntosRequeridos(puntosRequeridos);
-//        recompensa.setAporteSoles(aporteSoles);
-//    }
-//
-//    public void modificarValorRecompensa(Long idRecompensa, double aporteSoles){
-//        RecompensaEntity recompensa = recompensaRepository.findById(idRecompensa);
-//        recompensa.setAporteSoles(aporteSoles);
-//    }
 
     public void modificarValorRecompensa(Long idRecompensa, int puntosRequeridos){
         RecompensaEntity recompensa = recompensaRepository.findById(idRecompensa);
@@ -125,13 +104,19 @@ public class RecompensaService {
         }
     }
 
-    public RecompensasResponseDTOF recompensasPeriodo(Long idPeriodo){
-        List<ValeEntity> vales = recompensaRepository.findValesPorPeriodo(idPeriodo);
-        List<RecompensaValeDTO> valesDTO = vales.stream()
-                .map(v -> new RecompensaValeDTO(v.getRecId(), v.getDescuentoSoles(), v.getNombre(), v.getDescripcion(), v.getVigencia(), v.getPuntosRequeridos(), v.getStock()))
-                .toList();
-        List<RecompensaProductoDTO> recompensaProductoDTOS = recompensaRepository.findProductosByPeriodo(idPeriodo);
-        return new RecompensasResponseDTOF(recompensaProductoDTOS, valesDTO);
+    public RecompensasResponseDTOF recompensasPeriodo(){
+
+        PeriodoEntity periodo = periodoRepository.findPeriodoActual();
+
+        if(periodo!=null){
+            List<ValeEntity> vales = recompensaRepository.findValesPorPeriodo(periodo.getId());
+            List<RecompensaValeDTO> valesDTO = vales.stream()
+                    .map(v -> new RecompensaValeDTO(v.getRecId(), v.getDescuentoSoles(), v.getNombre(), v.getDescripcion(), v.getVigencia(), v.getPuntosRequeridos()))
+                    .toList();
+            List<RecompensaProductoDTO> recompensaProductoDTOS = recompensaRepository.findProductosByPeriodo(periodo.getId());
+            return new RecompensasResponseDTOF(recompensaProductoDTOS, valesDTO, true);
+        }
+        return new RecompensasResponseDTOF(null, null, false);
     }
 
     public List<RecompensaEntity> recompensasDisponibles(Long idPeriodo) {

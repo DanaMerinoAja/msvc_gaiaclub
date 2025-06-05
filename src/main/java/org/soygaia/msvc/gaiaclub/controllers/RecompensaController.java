@@ -6,11 +6,11 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.soygaia.msvc.gaiaclub.models.dtos.*;
-import org.soygaia.msvc.gaiaclub.models.entity.RecompensaEntity;
+import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.RecompensaDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.RecompensaResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.RecompensasResponseDTOF;
 import org.soygaia.msvc.gaiaclub.services.RecompensaService;
 
-import java.util.List;
 import java.util.Map;
 
 @Path("/recompensa")
@@ -32,13 +32,10 @@ public class RecompensaController {
     }
 
     @GET
-    @Path("/recompensas-periodo-actual/{idPeriodo}")
-    public Response obtenerRecompensasVigentes(@PathParam("idPeriodo") Long idPeriodo){
-        RecompensasResponseDTOF recompensasPeriodo = recompensaService.r(idPeriodo);
-        if(recompensaProductoDTOS.isEmpty()){
-            return Response.status(Response.Status.NOT_FOUND).entity("No se encontraron recompensas disponibles").build();
-        }
-        return  Response.status(Response.Status.OK).entity(recompensaProductoDTOS).build();
+    @Path("/recompensas-periodo-actual")
+    public Response obtenerRecompensasVigentes(){
+        RecompensasResponseDTOF recompensasPeriodo = recompensaService.recompensasPeriodo();
+        return  Response.status(Response.Status.OK).entity(recompensasPeriodo).build();
     }
 
 }

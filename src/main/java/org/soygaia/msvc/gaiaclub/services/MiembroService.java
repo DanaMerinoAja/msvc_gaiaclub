@@ -4,8 +4,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
-import org.soygaia.msvc.gaiaclub.models.dtos.MiembroRegistroDTO;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.soygaia.msvc.gaiaclub.models.dtos.miembro.MiembroGetDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.miembro.MiembroRegistroDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.MiembroClubEntity;
 import org.soygaia.msvc.gaiaclub.repositories.MiembroRepository;
 
@@ -24,12 +27,20 @@ public class MiembroService {
     @PersistenceContext
     EntityManager entityManager;
 
-    public MiembroClubEntity registrarMiembro(MiembroRegistroDTO miembro){
+    @ConfigProperty(name = "gaia.puntos.valor-bienvenida", defaultValue = "5")
+    int bonificacionBienvenida;
 
-        Optional<MiembroClubEntity> opMiembro = obtenerMiembro(miembro.getClienteId(), miembro.getCorreo());
+    public MiembroGetDTO registrarMiembro(MiembroRegistroDTO miembro){
+
+        Optional<MiembroClubEntity> opMiembro = miembroRepository.find("SELECT m FROM MiembroClubEntity m WHERE m.clienteId= ?1 OR m.correo = ?2",
+                miembro.getClienteId(),
+                miembro.getCorreo()).singleResultOptional();
+
+
+        MiembroClubEntity miembroClubEntity = new MiembroClubEntity();
+        MiembroGetDTO miembroGetDTO = new MiembroGetDTO();
 
         if(opMiembro.isEmpty()){
-            MiembroClubEntity miembroClubEntity = new MiembroClubEntity();
             miembroClubEntity.setClienteId(miembro.getClienteId());
             miembroClubEntity.setNombresCompletos(miembro.getNombresCompletos());
             miembroClubEntity.setTelefono(miembro.getTelefono());
@@ -39,16 +50,51 @@ public class MiembroService {
             miembroRepository.persist(miembroClubEntity);
             puntosService.registrarPuntosNuevoMiembro(miembroClubEntity);
 
-            return miembroClubEntity;
+            miembroGetDTO.setIdMiembro(miembroClubEntity.getIdMiembro());
+            miembroGetDTO.setCorreo(miembroClubEntity.getCorreo());
+            miembroGetDTO.setTelefono(miembroClubEntity.getTelefono());
+            miembroGetDTO.setNombresCompletos(miembroClubEntity.getNombresCompletos());
+            miembroGetDTO.setFechaRegistro(miembroClubEntity.getFechaRegistro());
+            miembroGetDTO.setClienteId(miembroClubEntity.getClienteId());
+            miembroGetDTO.setPuntosCercaVencer(0);
+            miembroGetDTO.setPuntosDisponibles(bonificacionBienvenida);
+        } else {
+            miembroClubEntity = opMiembro.get();
+
+            miembroGetDTO.setIdMiembro(miembroClubEntity.getIdMiembro());
+            miembroGetDTO.setCorreo(miembroClubEntity.getCorreo());
+            miembroGetDTO.setTelefono(miembroClubEntity.getTelefono());
+            miembroGetDTO.setNombresCompletos(miembroClubEntity.getNombresCompletos());
+            miembroGetDTO.setFechaRegistro(miembroClubEntity.getFechaRegistro());
+            miembroGetDTO.setClienteId(miembroClubEntity.getClienteId());
+            miembroGetDTO.setPuntosCercaVencer(puntosService.getTotalPuntosCercanosVencerPorCliente(miembroClubEntity.getIdMiembro()));
+            miembroGetDTO.setPuntosDisponibles(puntosService.getTotalPuntosDisponiblesPorCliente(miembroClubEntity.getIdMiembro()));
         }
-        return opMiembro.get();
+        return miembroGetDTO;
     }
 
-    public Optional<MiembroClubEntity> obtenerMiembro(Long idCliente, String correo){
+    public Optional<MiembroGetDTO> obtenerMiembro(Long idCliente, String correo){
         Optional<MiembroClubEntity> opMiembro = miembroRepository.find("SELECT m FROM MiembroClubEntity m WHERE m.clienteId= ?1 OR m.correo = ?2",
                 idCliente,
                         correo).singleResultOptional();
-        return opMiembro;
+        if(opMiembro.isPresent()){
+            MiembroClubEntity miembroClub = opMiembro.get();
+
+            MiembroGetDTO miembroGetDTO = new MiembroGetDTO();
+
+            miembroGetDTO.setIdMiembro(miembroClub.getIdMiembro());
+            miembroGetDTO.setCorreo(miembroClub.getCorreo());
+            miembroGetDTO.setTelefono(miembroClub.getTelefono());
+            miembroGetDTO.setNombresCompletos(miembroClub.getNombresCompletos());
+            miembroGetDTO.setFechaRegistro(miembroClub.getFechaRegistro());
+            miembroGetDTO.setClienteId(miembroClub.getClienteId());
+            Long puntosPorVencer = puntosService.getTotalPuntosCercanosVencerPorCliente(miembroGetDTO.getIdMiembro());
+            Long puntosDisponibles = puntosService.getTotalPuntosDisponiblesPorCliente(miembroGetDTO.getIdMiembro());
+            miembroGetDTO.setPuntosCercaVencer(puntosPorVencer != null ? puntosPorVencer:0);
+            miembroGetDTO.setPuntosDisponibles(puntosDisponibles !=null ? puntosDisponibles:0);
+            return Optional.of(miembroGetDTO);
+        }
+        return Optional.empty();
     }
 
 }

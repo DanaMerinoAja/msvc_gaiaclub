@@ -5,14 +5,16 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import org.soygaia.msvc.gaiaclub.models.dtos.RecompensaDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.RecompensaProductoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.RecompensaDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.productos.RecompensaProductoDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.RecompensaEntity;
+import org.soygaia.msvc.gaiaclub.models.entity.RecompensaProductoEntity;
 import org.soygaia.msvc.gaiaclub.models.entity.ValeEntity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @ApplicationScoped
@@ -24,7 +26,7 @@ public class RecompensaRepository implements PanacheRepository<RecompensaEntity>
 
     public List<ValeEntity> findValesPorPeriodo(Long periodoId) {
         return entityManager
-                .createQuery("SELECT r FROM ValeEntity r WHERE r.periodoId = :periodoId", ValeEntity.class)
+                .createQuery("SELECT r FROM ValeEntity r WHERE r.periodo.id = :periodoId", ValeEntity.class)
                 .setParameter("periodoId", periodoId)
                 .getResultList();
     }
@@ -111,7 +113,6 @@ public class RecompensaRepository implements PanacheRepository<RecompensaEntity>
         }
 
         return recompensasConProductos;
-        //return find("periodo.id", periodoId).list();
     }
     public List<RecompensaEntity> recompensasDisponibles(Long periodoId) {
         return find("stock > 0 AND periodo.id", periodoId).list();
@@ -120,5 +121,35 @@ public class RecompensaRepository implements PanacheRepository<RecompensaEntity>
     public RecompensaEntity nuevaRecompensa(RecompensaDTO recompensaDTO){
         return null;
 
+    }
+
+    public Optional<ValeEntity> findValeById(Long id) {
+        return Optional.ofNullable((ValeEntity) findById(id));
+    }
+
+    public Optional<RecompensaProductoEntity> findProductoById(Long id) {
+        return Optional.ofNullable((RecompensaProductoEntity)findById(id));
+    }
+
+    public void actualizarVale(Long id, Double nuevoDescuento, Integer nuevaVigencia, String nuevoNombre, String nuevaDescripcion) {
+        Optional<ValeEntity> valeOp = findValeById(id);
+        if (valeOp.isPresent()) {
+            ValeEntity vale = valeOp.get();
+            vale.setDescuentoSoles(nuevoDescuento);
+            vale.setVigencia(nuevaVigencia);
+            vale.setNombre(nuevoNombre);
+            vale.setDescripcion(nuevaDescripcion);
+        }
+    }
+
+    public void actualizarProducto(Long id, Double nuevoAporte, String nuevoNombre, String nuevaDescripcion, Integer nuevoStock) {
+        Optional<RecompensaProductoEntity> productoOp = findProductoById(id);
+        if (productoOp.isPresent()) {
+            RecompensaProductoEntity producto = productoOp.get();
+            producto.setAporteSoles(nuevoAporte);
+            producto.setNombre(nuevoNombre);
+            producto.setDescripcion(nuevaDescripcion);
+            producto.setStock(nuevoStock);
+        }
     }
 }

@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import org.soygaia.msvc.gaiaclub.models.dtos.OrdenDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.ecommerce.OrdenDTO;
 
 @ApplicationScoped
 @Transactional
@@ -28,8 +28,16 @@ public class OrdenRepository {
                 "    o.ord_cliente, \n" +
                 "    o.ord_fechacreacion;\n";
 
-        return  (OrdenDTO) entityManager.createNativeQuery(sql, OrdenDTO.class)
-                .setParameter("compraId", idOrden) // Establecer el periodoId con el nombre del parámetro
+        Object[] result = (Object[]) entityManager.createNativeQuery(sql)
+                .setParameter("compraId", idOrden)
                 .getSingleResult();
+        OrdenDTO dto = new OrdenDTO();
+        dto.setId(((Number) result[0]).longValue());
+        dto.setId_cliente(((Number) result[1]).longValue());
+        dto.setFecha(((java.sql.Timestamp) result[2]).toLocalDateTime().toLocalDate()); // 👈 solución
+        dto.setTotal(((Number) result[3]).doubleValue());
+
+        //return new OrdenDTO((Long) result[0], (Long) result[1], ((java.sql.Timestamp) result[2]).toLocalDateTime().toLocalDate(), (Double) result[3]);
+        return dto;
     }
 }

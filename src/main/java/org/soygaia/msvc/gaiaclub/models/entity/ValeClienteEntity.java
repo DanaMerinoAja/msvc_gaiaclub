@@ -12,11 +12,44 @@ public class ValeClienteEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, name = "vc_id")
     private Long id;
-    @JoinColumn(name = "vc_vale", nullable = false, referencedColumnName = "v_id")
-    private ValeEntity vale;
+    @JoinColumn(name = "vc_vale", nullable = false, referencedColumnName = "rec_id")
+    @ManyToOne
+    private RecompensaEntity vale;
     @JoinColumn(name = "v_miembro", referencedColumnName = "mc_id", nullable = false)
     @ManyToOne
     private MiembroClubEntity miembroClub;
     @Column(name = "v_fechacaducidad", nullable = false)
     private LocalDate fechaCaducidad;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public RecompensaEntity getVale() {
+        return vale;
+    }
+
+    public void setVale(RecompensaEntity vale) {
+        this.vale = vale;
+    }
+
+    public MiembroClubEntity getMiembroClub() {
+        return miembroClub;
+    }
+
+    public void setMiembroClub(MiembroClubEntity miembroClub) {
+        this.miembroClub = miembroClub;
+    }
+
+    public LocalDate getFechaCaducidad() {
+        return fechaCaducidad;
+    }
+
+    public void setFechaCaducidad(LocalDate fechaCaducidad) {
+        this.fechaCaducidad = fechaCaducidad;
+    }
 }

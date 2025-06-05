@@ -7,10 +7,10 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.soygaia.msvc.gaiaclub.models.dtos.PeriodoActualDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.PeriodoCreationResponseDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.PeriodoDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.PeriodoResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.periodo.PeriodoActualDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.periodo.PeriodoCreationResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.periodo.PeriodoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.periodo.PeriodoResponseDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.PeriodoEntity;
 import org.soygaia.msvc.gaiaclub.services.PeriodoService;
 
@@ -43,6 +43,9 @@ public class PeriodoResource {
 
         PeriodoResponseDTO response = new PeriodoResponseDTO();
 
+        response.setPuntosCompra(puntosPorCompra);
+        response.setValorCompra(valorCompra);
+
         if (periodoActual != null) {
             PeriodoActualDTO dto = new PeriodoActualDTO();
             dto.setNombre(periodoActual.getNombre());
@@ -53,6 +56,7 @@ public class PeriodoResource {
             response.setCurrent(true);
             response.setPeriodo(dto);
             response.setSuccess(true);
+
             return Response.ok(response).build();
         }
 
@@ -66,6 +70,7 @@ public class PeriodoResource {
             dto.setFechaFin(periodoProximo.getFechaFin()); // para el countdown usamos inicio
             dto.setFechaInicio(periodoProximo.getFechaInicio());
             dto.setIdPeriodo(periodoProximo.getId());
+            dto.setValorPunto(periodoProximo.getValorPunto());
             response.setCurrent(false);
             response.setPeriodo(dto);
             response.setSuccess(true);

@@ -13,7 +13,8 @@ import java.io.Serializable;
 public abstract class RecompensaEntity {
 
     @Id
-    @Column(name = "rec_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "rec_id", nullable = false)
     private Long recId;
 
     @Column(name = "rec_nombre")
@@ -28,11 +29,20 @@ public abstract class RecompensaEntity {
     @Column(name = "rec_stock")
     private Integer stock;
 
-    @Column(name = "rec_periodo")
-    private Long periodoId;
+    @JoinColumn(name = "rec_periodo", referencedColumnName = "per_id", nullable = false)
+    @ManyToOne
+    private PeriodoEntity periodo;
 
     public Long getRecId() {
         return recId;
+    }
+
+    public PeriodoEntity getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(PeriodoEntity periodo) {
+        this.periodo = periodo;
     }
 
     public void setRecId(Long recId) {
@@ -69,14 +79,6 @@ public abstract class RecompensaEntity {
 
     public void setStock(Integer stock) {
         this.stock = stock;
-    }
-
-    public Long getPeriodoId() {
-        return periodoId;
-    }
-
-    public void setPeriodoId(Long periodoId) {
-        this.periodoId = periodoId;
     }
 }
 

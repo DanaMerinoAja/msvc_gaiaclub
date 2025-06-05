@@ -7,7 +7,8 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
-import org.soygaia.msvc.gaiaclub.models.dtos.CanjeRequestDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.canjes.CanjeRequestDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.canjes.UltimosCanjesDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.CanjeEntity;
 import org.soygaia.msvc.gaiaclub.services.CanjeService;
 
@@ -40,7 +41,9 @@ public class CanjeResource {
     @GET
     @Path("/ultimoscanjes-cliente/{idCliente}/{idPeriodo}")
     public Response ultimosCanjes(@PathParam("idMiembro") Long idMiembro, @PathParam("idPeriodo") Long idPeriodo){
-        canjeService.ultimosCanjesCliente(idPeriodo, idMiembro);
-        return Response.ok().build();
+        List<UltimosCanjesDTO> ultCanjes = canjeService.ultimosCanjesCliente(idPeriodo, idMiembro);
+        if(ultCanjes.isEmpty())
+            return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.status(Response.Status.OK).entity(ultCanjes).build();
     }
 }

@@ -1,5 +1,6 @@
 package org.soygaia.msvc.gaiaclub.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class CanjeEntity {
     @ManyToOne
     private PeriodoEntity periodo;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dcjCanjePadre", fetch = FetchType.LAZY)
     private List<DetalleCanjeEntity> detallesCanje;
 
