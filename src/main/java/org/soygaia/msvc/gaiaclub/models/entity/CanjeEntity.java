@@ -25,6 +25,15 @@ public class CanjeEntity {
     @ManyToOne
     private PeriodoEntity periodo;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cj_estado", nullable = false)
+    private EstadoCanje estado;
+
+    //recompensa, vale
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cj_tipo", nullable = false)
+    private TipoCanje tipoCanje;
+
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dcjCanjePadre", fetch = FetchType.LAZY)
     private List<DetalleCanjeEntity> detallesCanje;
@@ -70,5 +79,29 @@ public class CanjeEntity {
 
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
+    }
+
+    public EstadoCanje getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoCanje estado) {
+        this.estado = estado;
+    }
+
+    public TipoCanje getTipoCanje() {
+        return tipoCanje;
+    }
+
+    public void setTipoCanje(TipoCanje tipoCanje) {
+        this.tipoCanje = tipoCanje;
+    }
+
+    public enum EstadoCanje {
+        POR_ENTREGAR, ENTREGADO, CANCELADO, ENTREGADO_VALE
+    }
+
+    public enum TipoCanje {
+        VALE, RECOMPENSA
     }
 }

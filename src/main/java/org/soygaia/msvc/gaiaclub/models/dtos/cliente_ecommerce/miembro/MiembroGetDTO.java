@@ -1,39 +1,17 @@
-package org.soygaia.msvc.gaiaclub.models.entity;
-
-import jakarta.persistence.*;
+package org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.miembro;
 
 import java.time.LocalDate;
-import java.util.List;
 
-@Table(name = "t_miembroclub")
-@Entity
-public class MiembroClubEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "mc_id", nullable = false)
+public class MiembroGetDTO {
     private Long idMiembro;
-    @Column(name = "mc_fecharegistro", nullable = false)
     private LocalDate fechaRegistro;
-    @Column(name = "mc_nombrecompleto", nullable = false)
     private String nombresCompletos;
-    @Column(name = "mc_telefono")
     private String telefono;
-    @Column(name = "mc_correo")
     private String correo;
-    @Column(name = "mc_cliente")
     private Long clienteId;
-    @Column(name = "mc_dni")
+    private long puntosDisponibles;
+    private long puntosCercaVencer;
     private String dni;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "miembro", fetch = FetchType.LAZY)
-    private List<PuntosEntity> puntos;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "miembro", fetch = FetchType.LAZY)
-    private List<CanjeEntity> canjes;
-
-    public List<CanjeEntity> getCanjes() {
-        return canjes;
-    }
 
     public String getDni() {
         return dni;
@@ -41,18 +19,6 @@ public class MiembroClubEntity {
 
     public void setDni(String dni) {
         this.dni = dni;
-    }
-
-    public void setCanjes(List<CanjeEntity> canjes) {
-        this.canjes = canjes;
-    }
-
-    public List<PuntosEntity> getPuntos() {
-        return puntos;
-    }
-
-    public void setPuntos(List<PuntosEntity> puntos) {
-        this.puntos = puntos;
     }
 
     public Long getIdMiembro() {
@@ -101,5 +67,21 @@ public class MiembroClubEntity {
 
     public void setClienteId(Long clienteId) {
         this.clienteId = clienteId;
+    }
+
+    public long getPuntosDisponibles() {
+        return puntosDisponibles;
+    }
+
+    public void setPuntosDisponibles(long puntosDisponibles) {
+        this.puntosDisponibles = puntosDisponibles;
+    }
+
+    public long getPuntosCercaVencer() {
+        return puntosCercaVencer;
+    }
+
+    public void setPuntosCercaVencer(long puntosCercaVencer) {
+        this.puntosCercaVencer = puntosCercaVencer;
     }
 }

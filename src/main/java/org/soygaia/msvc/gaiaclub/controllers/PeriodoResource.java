@@ -7,10 +7,10 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.soygaia.msvc.gaiaclub.models.dtos.periodo.PeriodoActualDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.periodo.PeriodoCreationResponseDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.periodo.PeriodoDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.periodo.PeriodoResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoActualDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoCreationResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoResponseDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.PeriodoEntity;
 import org.soygaia.msvc.gaiaclub.services.PeriodoService;
 

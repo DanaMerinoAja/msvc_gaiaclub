@@ -15,5 +15,6 @@ public class BonificacionService {
     @PersistenceContext
     EntityManager entityManager;
 
+    
 
 }

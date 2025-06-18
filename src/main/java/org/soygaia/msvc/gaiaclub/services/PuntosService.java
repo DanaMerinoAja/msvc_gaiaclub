@@ -4,13 +4,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hibernate.service.spi.ServiceException;
-import org.soygaia.msvc.gaiaclub.models.dtos.ecommerce.OrdenDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.puntos.PuntosDisponiblesDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.puntos.PuntosRegistroDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.ecommerce.OrdenDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.puntos.PuntosDisponiblesDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.puntos.PuntosRegistroDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.MiembroClubEntity;
 import org.soygaia.msvc.gaiaclub.models.entity.PuntosEntity;
 import org.soygaia.msvc.gaiaclub.repositories.MiembroRepository;
@@ -19,7 +18,6 @@ import org.soygaia.msvc.gaiaclub.repositories.PuntosRepository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @ApplicationScoped
 @Transactional
@@ -60,6 +58,8 @@ public class PuntosService {
                 OrdenDTO ordenDTO = ordenRepository.findOrdenId(puntos.getIdOrigen());
                 puntosEntity.setTotalPuntos((int) (ordenDTO.getTotal()/valorCompra*puntosPorCompra));
                 puntosEntity.setTipoOrigen(PuntosEntity.TipoOrigen.COMPRA);
+            } else if(puntos.getTipoOrigen().equals(PuntosEntity.TipoOrigen.BONIFICACION.toString())){
+
             }
         } catch (Exception ex){
             throw new ServiceException("Error en el registro: " + ex.getMessage());
@@ -99,7 +99,7 @@ public class PuntosService {
                         "SELECT SUM(p.totalPuntos) FROM PuntosEntity p WHERE p.estado = 'VIGENTE' AND p.miembro.idMiembro = :miembroId AND p.fechaCaducidad <= :proxSemana",
                         Long.class)
                 .setParameter("miembroId", miembroId)
-                .setParameter("proxSemana", LocalDate.now().plusDays(7))
+                .setParameter("proxSemana", LocalDate.now().plusDays(15))
                 .getSingleResult();
     }
 
@@ -161,25 +161,6 @@ public class PuntosService {
                 .sum();
 
         return new PuntosDisponiblesDTO(puntos, total);
-    }
-
-    public void devolverPuntos(LocalDate fechaCanje, Long idMiembro, int totalCanje){
-        List<PuntosEntity> listaPuntos = puntosRepository.find("miembro.idMiembro = ?1 AND estado = 'CANJEADO' AND fechaCanje = ?2",
-                Sort.ascending("fechaCaducidad"),
-                idMiembro, fechaCanje).list();
-
-        int auxTotal = totalCanje;
-
-        for(PuntosEntity p : listaPuntos){
-            int puntosCanjeados = p.getPuntosCanjeados();
-            if (totalCanje < puntosCanjeados) {
-                p.setPuntosCanjeados(0);
-                p.setEstado(PuntosEntity.EstadoPuntos.DEVUELTO);
-                auxTotal -= puntosCanjeados;
-            } else {
-            }
-        }
-
     }
 
 }

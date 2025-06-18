@@ -20,6 +20,18 @@ public class ValeClienteEntity {
     private MiembroClubEntity miembroClub;
     @Column(name = "v_fechacaducidad", nullable = false)
     private LocalDate fechaCaducidad;
+    //Canjeado, Vigente, Vencido
+    @Enumerated(EnumType.STRING)
+    @Column(name = "v_estado", nullable = false)
+    private EstadoVale estado;
+
+    public EstadoVale getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoVale estado) {
+        this.estado = estado;
+    }
 
     public Long getId() {
         return id;
@@ -51,5 +63,9 @@ public class ValeClienteEntity {
 
     public void setFechaCaducidad(LocalDate fechaCaducidad) {
         this.fechaCaducidad = fechaCaducidad;
+    }
+
+    public enum EstadoVale {
+        VIGENTE, CADUCADO, CANJEADO
     }
 }

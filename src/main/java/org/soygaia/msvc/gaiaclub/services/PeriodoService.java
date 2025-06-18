@@ -4,8 +4,8 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.soygaia.msvc.gaiaclub.models.dtos.periodo.PeriodoCreationResponseDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.periodo.PeriodoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoCreationResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.PeriodoEntity;
 import org.soygaia.msvc.gaiaclub.repositories.PeriodoRepository;
 

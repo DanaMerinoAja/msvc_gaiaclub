@@ -13,8 +13,8 @@ public class BonificacionEntity {
     private String descripcion;
     @Column(name = "boni_nombre")
     private String nombre;
-    @Column(name = "boni_cliente")
-    private Long idCliente;
+    @Column(name = "boni_puntos")
+    private Integer puntos;
 
     public Long getId() {
         return id;
@@ -40,11 +40,11 @@ public class BonificacionEntity {
         this.nombre = nombre;
     }
 
-    public Long getIdCliente() {
-        return idCliente;
+    public Integer getPuntos() {
+        return puntos;
     }
 
-    public void setIdCliente(Long idCliente) {
-        this.idCliente = idCliente;
+    public void setPuntos(Integer puntos) {
+        this.puntos = puntos;
     }
 }

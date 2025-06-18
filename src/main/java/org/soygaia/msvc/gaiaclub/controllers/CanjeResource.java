@@ -7,8 +7,8 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
-import org.soygaia.msvc.gaiaclub.models.dtos.canjes.CanjeRequestDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.canjes.UltimosCanjesDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.canjes.CanjeRequestDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.canjes.UltimosCanjesDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.CanjeEntity;
 import org.soygaia.msvc.gaiaclub.services.CanjeService;
 
@@ -25,14 +25,10 @@ public class CanjeResource {
 
     @POST
     @Transactional
-    public Response registrarCanje(@Valid @RequestBody CanjeRequestDTO dto) {
+    public Response registrarCanjeRecompensa(@Valid @RequestBody CanjeRequestDTO dto) {
         try {
-            CanjeEntity canjeEntity = canjeService.registrarCanje(dto);
+            CanjeEntity canjeEntity = canjeService.registrarCanjeRecompensa(dto);
             return Response.ok(canjeEntity).build();
-        } catch (IllegalStateException stockRecompensaException){
-            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("mensaje","Stock de recompensa agotado")).build();
-        } catch (NotFoundException recompensaNoExiste){
-            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("mensaje","Recompensa no existe")).build();
         } catch (Exception ex) {
             return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("mensaje",ex.getMessage())).build();
         }

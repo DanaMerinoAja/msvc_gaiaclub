@@ -14,6 +14,6 @@ public class ValeClienteRepository implements PanacheRepository<ValeClienteEntit
 
     public List<ValeClienteEntity> findValesCliente(MiembroClubEntity miembroClub){
 
-        return find("miembroClub.idMiembro = ?1 AND fechaCaducidad > ?2", miembroClub.getClienteId(), LocalDate.now()).list();
+        return find("miembroClub.idMiembro = ?1 AND fechaCaducidad > ?2 AND estado = ?3", miembroClub.getClienteId(), LocalDate.now(), ValeClienteEntity.EstadoVale.VIGENTE).list();
     }
 }

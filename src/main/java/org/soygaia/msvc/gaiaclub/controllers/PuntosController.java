@@ -7,7 +7,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
-import org.soygaia.msvc.gaiaclub.models.dtos.puntos.PuntosRegistroDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.puntos.PuntosRegistroDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.PuntosEntity;
 import org.soygaia.msvc.gaiaclub.services.PuntosService;
 
@@ -32,7 +32,7 @@ public class PuntosController {
 
     @GET
     @Path("/obtener/{idCliente}")
-    public Response ontenerPuntos(@PathParam("idCliente") Long idCliente) {
+    public Response obtenerPuntos(@PathParam("idCliente") Long idCliente) {
         Long totalPuntos = puntosService.getTotalPuntosDisponiblesPorCliente(idCliente);
         if(totalPuntos!= null){
             return Response.status(Response.Status.OK).entity(Map.of(

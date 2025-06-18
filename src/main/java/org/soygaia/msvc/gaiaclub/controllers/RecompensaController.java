@@ -6,9 +6,9 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.RecompensaDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.RecompensaResponseDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.recompensas.RecompensasResponseDTOF;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.RecompensaDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.RecompensaResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.RecompensasResponseDTOF;
 import org.soygaia.msvc.gaiaclub.services.RecompensaService;
 
 import java.util.Map;
