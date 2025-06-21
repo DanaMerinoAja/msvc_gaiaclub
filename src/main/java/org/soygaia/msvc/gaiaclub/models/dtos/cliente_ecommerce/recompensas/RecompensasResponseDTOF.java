@@ -1,17 +1,17 @@
 package org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas;
 
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.productos.RecompensaProductoDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.RecompensaValeDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.ValeDTO;
 
 import java.util.List;
 
 public class RecompensasResponseDTOF {
     private boolean periodo;
     private List<RecompensaProductoDTO> recompensasProducto;
-    private List<RecompensaValeDTO> recompensasVale;
+    private List<ValeDTO> recompensasVale;
 
     // Constructor
-    public RecompensasResponseDTOF(List<RecompensaProductoDTO> recompensasProducto, List<RecompensaValeDTO> recompensasVale, boolean periodo) {
+    public RecompensasResponseDTOF(List<RecompensaProductoDTO> recompensasProducto, List<ValeDTO> recompensasVale, boolean periodo) {
         this.recompensasProducto = recompensasProducto;
         this.recompensasVale = recompensasVale;
         this.periodo = periodo;
@@ -33,11 +33,11 @@ public class RecompensasResponseDTOF {
         this.recompensasProducto = recompensasProducto;
     }
 
-    public List<RecompensaValeDTO> getRecompensasVale() {
+    public List<ValeDTO> getRecompensasVale() {
         return recompensasVale;
     }
 
-    public void setRecompensasVale(List<RecompensaValeDTO> recompensasVale) {
+    public void setRecompensasVale(List<ValeDTO> recompensasVale) {
         this.recompensasVale = recompensasVale;
     }
 }

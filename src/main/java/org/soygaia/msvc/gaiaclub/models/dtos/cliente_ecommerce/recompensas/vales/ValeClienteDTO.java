@@ -3,26 +3,35 @@ package org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vale
 import java.time.LocalDate;
 
 public class ValeClienteDTO {
-    private Long idVale;
-    private Long idRecompensa;
+    private Long idValeCliente;
+    private Long idValePeriodo;
     private Long idMiembro;
     private LocalDate fechaCaducidad;
-    private RecompensaValeDTO vale;
+    private Integer puntos;
+    private ValeDTO vale;
 
-    public Long getIdVale() {
-        return idVale;
+    public Integer getPuntos() {
+        return puntos;
     }
 
-    public void setIdVale(Long idVale) {
-        this.idVale = idVale;
+    public void setPuntos(Integer puntos) {
+        this.puntos = puntos;
     }
 
-    public Long getIdRecompensa() {
-        return idRecompensa;
+    public Long getIdValeCliente() {
+        return idValeCliente;
     }
 
-    public void setIdRecompensa(Long idRecompensa) {
-        this.idRecompensa = idRecompensa;
+    public void setIdValeCliente(Long idValeCliente) {
+        this.idValeCliente = idValeCliente;
+    }
+
+    public Long getIdValePeriodo() {
+        return idValePeriodo;
+    }
+
+    public void setIdValePeriodo(Long idValePeriodo) {
+        this.idValePeriodo = idValePeriodo;
     }
 
     public Long getIdMiembro() {
@@ -41,11 +50,11 @@ public class ValeClienteDTO {
         this.fechaCaducidad = fechaCaducidad;
     }
 
-    public RecompensaValeDTO getVale() {
+    public ValeDTO getVale() {
         return vale;
     }
 
-    public void setVale(RecompensaValeDTO vale) {
+    public void setVale(ValeDTO vale) {
         this.vale = vale;
     }
 }

@@ -17,6 +17,17 @@ public class PuntosRegistroDTO {
     @Pattern(regexp = "COMPRA|BONIFICACION")
     private String tipoOrigen;
 
+    //Atributo a eliminar en la implementación
+    private int puntos;
+
+    public int getPuntos() {
+        return puntos;
+    }
+
+    public void setPuntos(int puntos) {
+        this.puntos = puntos;
+    }
+
     public Long getIdOrigen() {
         return idOrigen;
     }

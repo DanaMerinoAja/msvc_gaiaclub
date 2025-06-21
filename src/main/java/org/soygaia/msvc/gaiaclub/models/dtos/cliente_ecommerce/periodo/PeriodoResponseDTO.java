@@ -1,11 +1,13 @@
 package org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo;
 
+import org.soygaia.msvc.gaiaclub.models.dtos.GeneralInfoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoDTO;
+
 public class PeriodoResponseDTO {
-    private boolean isCurrent;
-    private PeriodoActualDTO periodo;
-    private double puntosCompra;
-    private double valorCompra;
     private boolean success;
+    private boolean isCurrent;
+    private PeriodoDTO periodo;
+    private GeneralInfoDTO generalInfo;
 
     public boolean isSuccess() {
         return success;
@@ -23,27 +25,20 @@ public class PeriodoResponseDTO {
         isCurrent = current;
     }
 
-    public PeriodoActualDTO getPeriodo() {
+    public PeriodoDTO getPeriodo() {
         return periodo;
     }
 
-    public void setPeriodo(PeriodoActualDTO periodo) {
+    public void setPeriodo(PeriodoDTO periodo) {
         this.periodo = periodo;
     }
 
-    public double getPuntosCompra() {
-        return puntosCompra;
+    public GeneralInfoDTO getGeneralInfo() {
+        return generalInfo;
     }
 
-    public void setPuntosCompra(double puntosCompra) {
-        this.puntosCompra = puntosCompra;
+    public void setGeneralInfo(GeneralInfoDTO generalInfo) {
+        this.generalInfo = generalInfo;
     }
 
-    public double getValorCompra() {
-        return valorCompra;
-    }
-
-    public void setValorCompra(double valorCompra) {
-        this.valorCompra = valorCompra;
-    }
 }

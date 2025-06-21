@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hibernate.service.spi.ServiceException;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panelcliente.PuntoMovimientoDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.ecommerce.OrdenDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.puntos.PuntosDisponiblesDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.puntos.PuntosRegistroDTO;
@@ -18,6 +19,7 @@ import org.soygaia.msvc.gaiaclub.repositories.PuntosRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Transactional
@@ -88,7 +90,7 @@ public class PuntosService {
 
     public Long getTotalPuntosDisponiblesPorCliente(Long miembroId) {
         return entityManager.createQuery(
-                        "SELECT SUM(p.totalPuntos) FROM PuntosEntity p WHERE p.estado = 'VIGENTE' AND p.miembro.idMiembro = :miembroId",
+                        "SELECT SUM(p.totalPuntos) FROM PuntosEntity p WHERE p.estado = 'VIGENTE' AND p.miembro.id = :miembroId",
                             Long.class
                 ).setParameter("miembroId", miembroId)
                 .getSingleResult();
@@ -96,7 +98,7 @@ public class PuntosService {
 
     public Long getTotalPuntosCercanosVencerPorCliente(Long miembroId) {
         return entityManager.createQuery(
-                        "SELECT SUM(p.totalPuntos) FROM PuntosEntity p WHERE p.estado = 'VIGENTE' AND p.miembro.idMiembro = :miembroId AND p.fechaCaducidad <= :proxSemana",
+                        "SELECT SUM(p.totalPuntos) FROM PuntosEntity p WHERE p.estado = 'VIGENTE' AND p.miembro.id = :miembroId AND p.fechaCaducidad <= :proxSemana",
                         Long.class)
                 .setParameter("miembroId", miembroId)
                 .setParameter("proxSemana", LocalDate.now().plusDays(15))
@@ -105,7 +107,7 @@ public class PuntosService {
 
     public List<PuntosEntity> getPuntosVigentesOrdenados(Long miembroId) {
         return puntosRepository.find(
-                "miembro.idMiembro = ?1 AND estado = 'VIGENTE'",
+                "miembro.id = ?1 AND estado = 'VIGENTE'",
                 Sort.ascending("fechaCaducidad"),
                 miembroId
         ).list();
@@ -161,6 +163,24 @@ public class PuntosService {
                 .sum();
 
         return new PuntosDisponiblesDTO(puntos, total);
+    }
+
+    //acá límite tiene una función como de paginación
+    public List<PuntoMovimientoDTO> obtenerUltimosMovimientos(Long idMiembro, int limite) {
+        return puntosRepository
+                .find("miembro.id = ?1 ORDER BY fecha DESC", idMiembro)
+                .stream()
+                .limit(limite)
+                .map(p ->
+                        new PuntoMovimientoDTO(
+                                p.getEstado().equals(PuntosEntity.EstadoPuntos.VIGENTE) ?
+                                        p.getFechaCanje():
+                                        p.getEstado().equals(PuntosEntity.EstadoPuntos.CANJEADO) ? p.getFechaCanje(): p.getFechaCaducidad(),
+                                p.getEstado().toString(),
+                                p.getEstado().equals(PuntosEntity.EstadoPuntos.CANJEADO) ? p.getPuntosCanjeados(): p.getTotalPuntos()
+                        )
+                )
+                .collect(Collectors.toList());
     }
 
 }

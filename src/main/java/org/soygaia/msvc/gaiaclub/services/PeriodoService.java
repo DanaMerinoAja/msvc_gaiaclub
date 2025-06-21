@@ -4,8 +4,9 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoCreationResponseDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoCreationResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoCreationDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.PeriodoEntity;
 import org.soygaia.msvc.gaiaclub.repositories.PeriodoRepository;
 
@@ -20,8 +21,7 @@ public class PeriodoService {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Transactional
-    public PeriodoCreationResponseDTO registrarPeriodo(PeriodoDTO dto) {
+    public PeriodoCreationResponseDTO registrarPeriodo(PeriodoCreationDTO dto) {
         // Verificar que no haya periodos con fechas cruzadas
         List<PeriodoEntity> periodosCruzados = periodoRepository.find(
                 "SELECT p FROM PeriodoEntity p WHERE " +
@@ -39,7 +39,6 @@ public class PeriodoService {
         // Si no hay conflictos, crear el nuevo periodo
         PeriodoEntity periodo = new PeriodoEntity();
         periodo.setNombre(dto.getNombre());
-        periodo.setValorPunto(dto.getValorPunto());
         periodo.setDescripcion(dto.getDescripcion());
         periodo.setFechaInicio(dto.getFechaInicio());
         periodo.setFechaFin(dto.getFechaFin());
@@ -50,6 +49,15 @@ public class PeriodoService {
 
     public PeriodoEntity getCurrentPeriod() {
         return periodoRepository.findPeriodoActual();
+    }
+
+    public PeriodoEntity modificarPeriodo(PeriodoDTO periodoDTO){
+        PeriodoEntity periodo = periodoRepository.findById(periodoDTO.getIdPeriodo());
+        periodo.setDescripcion(periodoDTO.getDescripcion());
+        periodo.setNombre(periodoDTO.getNombre());
+        periodo.setFechaFin(periodoDTO.getFechaFin());
+        periodo.setFechaInicio(periodoDTO.getFechaInicio());
+        return periodo;
     }
 
     public PeriodoEntity getNextPeriod() {

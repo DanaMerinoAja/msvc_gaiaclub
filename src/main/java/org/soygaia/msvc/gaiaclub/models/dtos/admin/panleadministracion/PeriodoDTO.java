@@ -1,23 +1,14 @@
-package org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo;
+package org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion;
 
 import java.time.LocalDate;
 
-public class PeriodoActualDTO {
+public class PeriodoDTO {
 
     private LocalDate fechaFin;
     private LocalDate fechaInicio;
     private String descripcion;
     private String nombre;
     private Long idPeriodo;
-    private double valorPunto;
-
-    public double getValorPunto() {
-        return valorPunto;
-    }
-
-    public void setValorPunto(double valorPunto) {
-        this.valorPunto = valorPunto;
-    }
 
     public Long getIdPeriodo() {
         return idPeriodo;

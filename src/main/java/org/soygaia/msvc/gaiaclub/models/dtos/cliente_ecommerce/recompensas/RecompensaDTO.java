@@ -5,12 +5,10 @@ public class RecompensaDTO {
     private Long idProducto;
     private Long idPeriodo;
     private String nombre;
-    private String tipoRecompensa;
     private Double aporteSoles;
     private Integer puntosRequeridos;
     private Integer stock;
     private String descripcion;
-    private Integer vigencia;
 
     public Long getIdProducto() {
         return idProducto;
@@ -34,14 +32,6 @@ public class RecompensaDTO {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getTipoRecompensa() {
-        return tipoRecompensa;
-    }
-
-    public void setTipoRecompensa(String tipoRecompensa) {
-        this.tipoRecompensa = tipoRecompensa;
     }
 
     public Double getAporteSoles() {
@@ -74,13 +64,5 @@ public class RecompensaDTO {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public Integer getVigencia() {
-        return vigencia;
-    }
-
-    public void setVigencia(Integer vigencia) {
-        this.vigencia = vigencia;
     }
 }

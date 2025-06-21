@@ -6,12 +6,14 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoActualDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoCreationResponseDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoDTO;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.GeneralInfoAdminDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoCreationResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoCreationDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoResponseDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.PeriodoEntity;
+import org.soygaia.msvc.gaiaclub.services.GeneralInfoService;
 import org.soygaia.msvc.gaiaclub.services.PeriodoService;
 
 import java.util.Map;
@@ -25,9 +27,12 @@ public class PeriodoResource {
     @Inject
     PeriodoService periodoService;
 
+    @Inject
+    GeneralInfoService generalInfoService;
+
     @POST
     @Path("/registrar")
-    public Response registrarPeriodo(@Valid PeriodoDTO dto) {
+    public Response registrarPeriodo(@Valid PeriodoCreationDTO dto) {
         PeriodoCreationResponseDTO periodoResponse = periodoService.registrarPeriodo(dto);
 
         return Response.status(periodoResponse.isEstado() ? Response.Status.CREATED : Response.Status.CONFLICT).entity(Map.of(
@@ -43,11 +48,10 @@ public class PeriodoResource {
 
         PeriodoResponseDTO response = new PeriodoResponseDTO();
 
-        response.setPuntosCompra(puntosPorCompra);
-        response.setValorCompra(valorCompra);
+        response.setGeneralInfo(generalInfoService.getGenInfoCliente());
 
         if (periodoActual != null) {
-            PeriodoActualDTO dto = new PeriodoActualDTO();
+            PeriodoDTO dto = new PeriodoDTO();
             dto.setNombre(periodoActual.getNombre());
             dto.setDescripcion(periodoActual.getDescripcion());
             dto.setFechaFin(periodoActual.getFechaFin());
@@ -64,13 +68,12 @@ public class PeriodoResource {
         periodoProximo = periodoService.getNextPeriod();
 
         if (periodoProximo != null) {
-            PeriodoActualDTO dto = new PeriodoActualDTO();
+            PeriodoDTO dto = new PeriodoDTO();
             dto.setNombre(periodoProximo.getNombre());
             dto.setDescripcion(periodoProximo.getDescripcion());
             dto.setFechaFin(periodoProximo.getFechaFin()); // para el countdown usamos inicio
             dto.setFechaInicio(periodoProximo.getFechaInicio());
             dto.setIdPeriodo(periodoProximo.getId());
-            dto.setValorPunto(periodoProximo.getValorPunto());
             response.setCurrent(false);
             response.setPeriodo(dto);
             response.setSuccess(true);
@@ -86,15 +89,16 @@ public class PeriodoResource {
                 .build();
     }
 
-    @ConfigProperty(name = "gaia.puntos.valor-de-compra", defaultValue = "10")
-    double valorCompra;
+    @PUT
+    @Path("/modificar-periodo")
+    public Response modificarPeriodo(@RequestBody PeriodoDTO periodo){
+        PeriodoEntity p = periodoService.modificarPeriodo(periodo);
+        return Response.status(Response.Status.OK).entity(p).build();
+    }
 
-    @ConfigProperty(name = "gaia.puntos.puntos-por-compra", defaultValue = "10")
-    double puntosPorCompra;
-
-    @GET
-    @Path("/valor-por-compra")
-    public Response getValorCompra(){
-        return Response.status(Response.Status.OK).entity(Map.of("valorCompra", valorCompra, "puntosPorCompra", puntosPorCompra)).build();
+    @POST
+    @Path("/general-info")
+    public Response gardarInformacionGeneral(@RequestBody GeneralInfoAdminDTO genInfDTO){
+        return Response.status(Response.Status.CREATED).entity(generalInfoService.guardarOActualizarInfoGeneralAdmin(genInfDTO)).build();
     }
 }

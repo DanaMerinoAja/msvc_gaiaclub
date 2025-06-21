@@ -8,16 +8,20 @@ public class CanjeRequestDTO {
     private Long periodoId;
     private List<DetalleCanjePost> detallesCanje;
 
+    public int getTotalPuntos() {
+        return totalPuntos;
+    }
+
+    public void setTotalPuntos(int totalPuntos) {
+        this.totalPuntos = totalPuntos;
+    }
+
     public Long getMiembroId() {
         return miembroId;
     }
 
     public void setMiembroId(Long miembroId) {
         this.miembroId = miembroId;
-    }
-
-    public List<DetalleCanjePost> getCanjeRequestDTOS() {
-        return detallesCanje;
     }
 
     public Long getPeriodoId() {
@@ -34,13 +38,5 @@ public class CanjeRequestDTO {
 
     public void setDetallesCanje(List<DetalleCanjePost> detallesCanje) {
         this.detallesCanje = detallesCanje;
-    }
-
-    public int getTotalPuntos() {
-        return totalPuntos;
-    }
-
-    public void setTotalPuntos(int totalPuntos) {
-        this.totalPuntos = totalPuntos;
     }
 }

@@ -5,32 +5,39 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "t_valescliente")
+@Table(name = "t_vales_cliente")
 public class ValeClienteEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(nullable = false, name = "vc_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "vc_id")
     private Long id;
-    @JoinColumn(name = "vc_vale", nullable = false, referencedColumnName = "rec_id")
-    @ManyToOne
-    private RecompensaEntity vale;
-    @JoinColumn(name = "v_miembro", referencedColumnName = "mc_id", nullable = false)
-    @ManyToOne
-    private MiembroClubEntity miembroClub;
-    @Column(name = "v_fechacaducidad", nullable = false)
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "vc_miembro", referencedColumnName = "mc_id")
+    private MiembroClubEntity miembro;
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "vc_vale_periodo", referencedColumnName = "vp_id")
+    private ValePeriodoEntity valePeriodo;
+
+    @Column(name = "vc_fecha_canje", nullable = false)
+    private LocalDate fechaCanje;
+
+    @Column(name = "vc_fecha_caducidad", nullable = false)
     private LocalDate fechaCaducidad;
-    //Canjeado, Vigente, Vencido
+
+    @Column(name = "vc_valor_puntos", nullable = false)
+    private Integer valorPuntos; // puntos usados en el momento del canje
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "v_estado", nullable = false)
-    private EstadoVale estado;
+    @Column(name = "vc_estado", nullable = false)
+    private EstadoValeCliente estado;
 
-    public EstadoVale getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoVale estado) {
-        this.estado = estado;
+    public enum EstadoValeCliente {
+        VIGENTE,
+        USADO,
+        CADUCADO
     }
 
     public Long getId() {
@@ -41,20 +48,28 @@ public class ValeClienteEntity {
         this.id = id;
     }
 
-    public RecompensaEntity getVale() {
-        return vale;
+    public MiembroClubEntity getMiembro() {
+        return miembro;
     }
 
-    public void setVale(RecompensaEntity vale) {
-        this.vale = vale;
+    public void setMiembro(MiembroClubEntity miembro) {
+        this.miembro = miembro;
     }
 
-    public MiembroClubEntity getMiembroClub() {
-        return miembroClub;
+    public ValePeriodoEntity getValePeriodo() {
+        return valePeriodo;
     }
 
-    public void setMiembroClub(MiembroClubEntity miembroClub) {
-        this.miembroClub = miembroClub;
+    public void setValePeriodo(ValePeriodoEntity valePeriodo) {
+        this.valePeriodo = valePeriodo;
+    }
+
+    public LocalDate getFechaCanje() {
+        return fechaCanje;
+    }
+
+    public void setFechaCanje(LocalDate fechaCanje) {
+        this.fechaCanje = fechaCanje;
     }
 
     public LocalDate getFechaCaducidad() {
@@ -65,7 +80,19 @@ public class ValeClienteEntity {
         this.fechaCaducidad = fechaCaducidad;
     }
 
-    public enum EstadoVale {
-        VIGENTE, CADUCADO, CANJEADO
+    public Integer getValorPuntos() {
+        return valorPuntos;
+    }
+
+    public void setValorPuntos(Integer valorPuntos) {
+        this.valorPuntos = valorPuntos;
+    }
+
+    public EstadoValeCliente getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoValeCliente estado) {
+        this.estado = estado;
     }
 }

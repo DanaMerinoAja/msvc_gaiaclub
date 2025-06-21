@@ -23,8 +23,6 @@ public class PeriodoEntity implements Serializable {
     private String descripcion;
     @Column(name = "per_nombre")
     private String nombre;
-    @Column(name = "per_valor_punto")
-    private double valorPunto;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "periodo", fetch = FetchType.LAZY)
@@ -77,13 +75,5 @@ public class PeriodoEntity implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public double getValorPunto() {
-        return valorPunto;
-    }
-
-    public void setValorPunto(double valorPunto) {
-        this.valorPunto = valorPunto;
     }
 }

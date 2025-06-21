@@ -7,8 +7,9 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panelcanjes.DetalleRecompensaCanjeDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.canjes.CanjeRequestDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.canjes.UltimosCanjesDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.miembro.MiembroInfoActDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.CanjeEntity;
 import org.soygaia.msvc.gaiaclub.services.CanjeService;
 
@@ -27,7 +28,7 @@ public class CanjeResource {
     @Transactional
     public Response registrarCanjeRecompensa(@Valid @RequestBody CanjeRequestDTO dto) {
         try {
-            CanjeEntity canjeEntity = canjeService.registrarCanjeRecompensa(dto);
+            MiembroInfoActDTO canjeEntity = canjeService.registrarCanjeRecompensa(dto);
             return Response.ok(canjeEntity).build();
         } catch (Exception ex) {
             return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("mensaje",ex.getMessage())).build();
@@ -35,9 +36,9 @@ public class CanjeResource {
     }
 
     @GET
-    @Path("/ultimoscanjes-cliente/{idCliente}/{idPeriodo}")
+    @Path("/ultimoscanjes-cliente/{idMiembro}/{idPeriodo}")
     public Response ultimosCanjes(@PathParam("idMiembro") Long idMiembro, @PathParam("idPeriodo") Long idPeriodo){
-        List<UltimosCanjesDTO> ultCanjes = canjeService.ultimosCanjesCliente(idPeriodo, idMiembro);
+        List<DetalleRecompensaCanjeDTO> ultCanjes = canjeService.ultimosCanjesCliente(idPeriodo, idMiembro);
         if(ultCanjes.isEmpty())
             return Response.status(Response.Status.NOT_FOUND).build();
         return Response.status(Response.Status.OK).entity(ultCanjes).build();

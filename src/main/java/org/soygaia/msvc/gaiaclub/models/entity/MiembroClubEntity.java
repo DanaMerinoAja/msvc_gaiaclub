@@ -1,5 +1,6 @@
 package org.soygaia.msvc.gaiaclub.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ public class MiembroClubEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "mc_id", nullable = false)
-    private Long idMiembro;
+    private Long id;
     @Column(name = "mc_fecharegistro", nullable = false)
     private LocalDate fechaRegistro;
     @Column(name = "mc_nombrecompleto", nullable = false)
@@ -25,9 +26,11 @@ public class MiembroClubEntity {
     @Column(name = "mc_dni")
     private String dni;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "miembro", fetch = FetchType.LAZY)
     private List<PuntosEntity> puntos;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "miembro", fetch = FetchType.LAZY)
     private List<CanjeEntity> canjes;
 
@@ -55,12 +58,12 @@ public class MiembroClubEntity {
         this.puntos = puntos;
     }
 
-    public Long getIdMiembro() {
-        return idMiembro;
+    public Long getId() {
+        return id;
     }
 
-    public void setIdMiembro(Long idMiembro) {
-        this.idMiembro = idMiembro;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDate getFechaRegistro() {

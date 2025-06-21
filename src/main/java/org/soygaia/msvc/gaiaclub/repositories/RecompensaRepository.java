@@ -8,8 +8,7 @@ import jakarta.transaction.Transactional;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.RecompensaDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.productos.RecompensaProductoDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.RecompensaEntity;
-import org.soygaia.msvc.gaiaclub.models.entity.RecompensaProductoEntity;
-import org.soygaia.msvc.gaiaclub.models.entity.ValeEntity;
+import org.soygaia.msvc.gaiaclub.models.entity.ValePeriodoEntity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,14 +23,15 @@ public class RecompensaRepository implements PanacheRepository<RecompensaEntity>
     @Inject
     EntityManager entityManager;
 
-    public List<ValeEntity> findValesPorPeriodo(Long periodoId) {
+    public List<ValePeriodoEntity> findValesPorPeriodo(Long periodoId) {
         return entityManager
-                .createQuery("SELECT r FROM ValeEntity r WHERE r.periodo.id = :periodoId", ValeEntity.class)
+                .createQuery("SELECT r FROM ValeEntity r WHERE r.periodo.id = :periodoId", ValePeriodoEntity.class)
                 .setParameter("periodoId", periodoId)
                 .getResultList();
     }
 
     public List<RecompensaProductoDTO> findProductosByPeriodo(Long periodoId){
+        //crear vista y mapearla a un entityr¿ vista
         String sql = "SELECT\n" +
                 "    rec.rec_id, \n" +
                 "    rec.rec_aportesoles, \n" +
@@ -93,7 +93,7 @@ public class RecompensaRepository implements PanacheRepository<RecompensaEntity>
                     (Double) row[1],  // rec_aportesoles
                     (String) row[2],  // rec_descripcion
                     (Long) row[3],  // rec_producto
-                    (BigDecimal) row[4],
+                    (BigDecimal) row[4],//ppv.pvt_preciomaximo
                     (String) row[5],  // rec_nombre
                     (Integer) row[6],  // rec_puntosreq
                     (Integer) row[7],  // rec_stock
@@ -114,6 +114,7 @@ public class RecompensaRepository implements PanacheRepository<RecompensaEntity>
 
         return recompensasConProductos;
     }
+
     public List<RecompensaEntity> recompensasDisponibles(Long periodoId) {
         return find("stock > 0 AND periodo.id", periodoId).list();
     }
@@ -123,29 +124,14 @@ public class RecompensaRepository implements PanacheRepository<RecompensaEntity>
 
     }
 
-    public Optional<ValeEntity> findValeById(Long id) {
-        return Optional.ofNullable((ValeEntity) findById(id));
-    }
-
-    public Optional<RecompensaProductoEntity> findProductoById(Long id) {
-        return Optional.ofNullable((RecompensaProductoEntity)findById(id));
-    }
-
-    public void actualizarVale(Long id, Double nuevoDescuento, Integer nuevaVigencia, String nuevoNombre, String nuevaDescripcion) {
-        Optional<ValeEntity> valeOp = findValeById(id);
-        if (valeOp.isPresent()) {
-            ValeEntity vale = valeOp.get();
-            vale.setDescuentoSoles(nuevoDescuento);
-            vale.setVigencia(nuevaVigencia);
-            vale.setNombre(nuevoNombre);
-            vale.setDescripcion(nuevaDescripcion);
-        }
+    public Optional<RecompensaEntity> findProductoById(Long id) {
+        return Optional.ofNullable(findById(id));
     }
 
     public void actualizarProducto(Long id, Double nuevoAporte, String nuevoNombre, String nuevaDescripcion, Integer nuevoStock) {
-        Optional<RecompensaProductoEntity> productoOp = findProductoById(id);
+        Optional<RecompensaEntity> productoOp = findProductoById(id);
         if (productoOp.isPresent()) {
-            RecompensaProductoEntity producto = productoOp.get();
+            RecompensaEntity producto = productoOp.get();
             producto.setAporteSoles(nuevoAporte);
             producto.setNombre(nuevoNombre);
             producto.setDescripcion(nuevaDescripcion);

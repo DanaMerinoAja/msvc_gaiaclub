@@ -12,8 +12,6 @@ import org.soygaia.msvc.gaiaclub.models.entity.MiembroClubEntity;
 import org.soygaia.msvc.gaiaclub.repositories.MiembroRepository;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -30,16 +28,11 @@ public class MiembroService {
 
     @ConfigProperty(name = "gaia.puntos.valor-bienvenida", defaultValue = "5")
     int bonificacionBienvenida;
+//
+//    public List<MiembroResumenDTO> listarMiembrosConResumen(){
+//
+//    }
 
-    public List<MiembroGetDTO> listaMiembros(){
-        List<MiembroClubEntity> list =  miembroRepository.findAll().list();
-
-        for(MiembroClubEntity m : list){
-
-        }
-
-        return new ArrayList<>();
-    }
 
     public MiembroGetDTO registrarMiembro(MiembroRegistroDTO miembro){
 
@@ -62,7 +55,7 @@ public class MiembroService {
             miembroRepository.persist(miembroClubEntity);
             puntosService.registrarPuntosNuevoMiembro(miembroClubEntity);
 
-            miembroGetDTO.setIdMiembro(miembroClubEntity.getIdMiembro());
+            miembroGetDTO.setIdMiembro(miembroClubEntity.getId());
             miembroGetDTO.setCorreo(miembroClubEntity.getCorreo());
             miembroGetDTO.setDni(miembroClubEntity.getDni());
             miembroGetDTO.setTelefono(miembroClubEntity.getTelefono());
@@ -74,14 +67,14 @@ public class MiembroService {
         } else {
             miembroClubEntity = opMiembro.get();
 
-            miembroGetDTO.setIdMiembro(miembroClubEntity.getIdMiembro());
+            miembroGetDTO.setIdMiembro(miembroClubEntity.getId());
             miembroGetDTO.setCorreo(miembroClubEntity.getCorreo());
             miembroGetDTO.setTelefono(miembroClubEntity.getTelefono());
             miembroGetDTO.setNombresCompletos(miembroClubEntity.getNombresCompletos());
             miembroGetDTO.setFechaRegistro(miembroClubEntity.getFechaRegistro());
             miembroGetDTO.setClienteId(miembroClubEntity.getClienteId());
-            miembroGetDTO.setPuntosCercaVencer(puntosService.getTotalPuntosCercanosVencerPorCliente(miembroClubEntity.getIdMiembro()));
-            miembroGetDTO.setPuntosDisponibles(puntosService.getTotalPuntosDisponiblesPorCliente(miembroClubEntity.getIdMiembro()));
+            miembroGetDTO.setPuntosCercaVencer(puntosService.getTotalPuntosCercanosVencerPorCliente(miembroClubEntity.getId()));
+            miembroGetDTO.setPuntosDisponibles(puntosService.getTotalPuntosDisponiblesPorCliente(miembroClubEntity.getId()));
         }
         return miembroGetDTO;
     }
@@ -95,7 +88,7 @@ public class MiembroService {
 
             MiembroGetDTO miembroGetDTO = new MiembroGetDTO();
 
-            miembroGetDTO.setIdMiembro(miembroClub.getIdMiembro());
+            miembroGetDTO.setIdMiembro(miembroClub.getId());
             miembroGetDTO.setCorreo(miembroClub.getCorreo());
             miembroGetDTO.setDni(miembroClub.getDni());
             miembroGetDTO.setTelefono(miembroClub.getTelefono());

@@ -33,7 +33,10 @@ public class RecompensaProductoDTO {
     }
 
 
-    public RecompensaProductoDTO(Long recId, Double aporteSoles, String descripcion, Long recProducto, BigDecimal precioProducto, String nombreRecompensa, int puntosRequeridos, int stock, Long periodoId, String nombreProducto, String slugProducto, String abreviaturaUnidadMedidaPres, String nombreUnidadMedida, String presentacion, String sku, String marca, String cantidadMedida, String imagenUrls) {
+    public RecompensaProductoDTO(Long recId, Double aporteSoles, String descripcion, Long recProducto, BigDecimal precioProducto,
+                                 String nombreRecompensa, int puntosRequeridos, int stock, Long periodoId, String nombreProducto,
+                                 String slugProducto, String abreviaturaUnidadMedidaPres, String nombreUnidadMedida, String presentacion,
+                                 String sku, String marca, String cantidadMedida, String imagenUrls) {
         this.recId = recId;
         this.aporteSoles = aporteSoles;
         this.descripcion = descripcion;

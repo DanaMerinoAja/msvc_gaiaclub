@@ -34,7 +34,7 @@ public class OrdenRepository {
         OrdenDTO dto = new OrdenDTO();
         dto.setId(((Number) result[0]).longValue());
         dto.setId_cliente(((Number) result[1]).longValue());
-        dto.setFecha(((java.sql.Timestamp) result[2]).toLocalDateTime().toLocalDate()); // 👈 solución
+        dto.setFecha(((java.sql.Timestamp) result[2]).toLocalDateTime().toLocalDate()); // solución a un tema de casteo
         dto.setTotal(((Number) result[3]).doubleValue());
 
         //return new OrdenDTO((Long) result[0], (Long) result[1], ((java.sql.Timestamp) result[2]).toLocalDateTime().toLocalDate(), (Double) result[3]);

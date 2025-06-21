@@ -1,10 +1,10 @@
-package org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo;
+package org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion;
 
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
-public class PeriodoDTO {
+public class PeriodoCreationDTO {
     @NotNull(message = "La fecha de inicio es obligatoria")
     @FutureOrPresent(message = "La fecha de inicio debe ser hoy o en el futuro")
     private LocalDate fechaInicio;
@@ -20,10 +20,6 @@ public class PeriodoDTO {
     @NotBlank(message = "El nombre del periodo es obligatorio")
     @Size(max = 100, message = "El nombre no puede exceder los 100 caracteres")
     private String nombre;
-
-    @NotNull(message = "El valor del punto es obligatorio")
-    @Min(value = 0, message = "El valor del punto no puede ser negativo")
-    private double valorPunto;
 
     public LocalDate getFechaInicio() {
         return fechaInicio;
@@ -57,11 +53,4 @@ public class PeriodoDTO {
         this.nombre = nombre;
     }
 
-    public double getValorPunto() {
-        return valorPunto;
-    }
-
-    public void setValorPunto(double valorPunto) {
-        this.valorPunto = valorPunto;
-    }
 }

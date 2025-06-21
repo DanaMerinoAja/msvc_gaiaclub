@@ -8,9 +8,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "t_recompensas", schema = "gaiaadm")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "rec_tipo", discriminatorType = DiscriminatorType.STRING)
-public abstract class RecompensaEntity {
+public class RecompensaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +18,17 @@ public abstract class RecompensaEntity {
     @Column(name = "rec_nombre")
     private String nombre;
 
+    @Column(name = "rec_producto")
+    private Long productoId;
+
     @Column(name = "rec_descripcion")
     private String descripcion;
 
     @Column(name = "rec_puntosreq")
     private Integer puntosRequeridos;
+
+    @Column(name = "rec_aportesoles")
+    private Double aporteSoles;
 
     @Column(name = "rec_stock")
     private Integer stock;
@@ -37,14 +41,6 @@ public abstract class RecompensaEntity {
         return recId;
     }
 
-    public PeriodoEntity getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(PeriodoEntity periodo) {
-        this.periodo = periodo;
-    }
-
     public void setRecId(Long recId) {
         this.recId = recId;
     }
@@ -55,6 +51,14 @@ public abstract class RecompensaEntity {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Long getProductoId() {
+        return productoId;
+    }
+
+    public void setProductoId(Long productoId) {
+        this.productoId = productoId;
     }
 
     public String getDescripcion() {
@@ -73,12 +77,28 @@ public abstract class RecompensaEntity {
         this.puntosRequeridos = puntosRequeridos;
     }
 
+    public Double getAporteSoles() {
+        return aporteSoles;
+    }
+
+    public void setAporteSoles(Double aporteSoles) {
+        this.aporteSoles = aporteSoles;
+    }
+
     public Integer getStock() {
         return stock;
     }
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public PeriodoEntity getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(PeriodoEntity periodo) {
+        this.periodo = periodo;
     }
 }
 
