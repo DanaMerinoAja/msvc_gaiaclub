@@ -8,6 +8,7 @@ public class DetalleCanjeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dcj_id")
     private Long idDetCanje;
 
     @Column(name = "dcj_puntos")
@@ -17,7 +18,7 @@ public class DetalleCanjeEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private RecompensaEntity dcjRecompensa;
 
-    @Column(name = "cj_cantidadrec", nullable = false)
+    @Column(name = "dcj_cantidadrec", nullable = false)
     private int cantidadRecompensa;
 
     @JoinColumn(name = "dcj_canjePadre" , referencedColumnName = "cj_id")

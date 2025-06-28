@@ -3,12 +3,10 @@ package org.soygaia.msvc.gaiaclub.services;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.recompensas.DeleteResponse;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.vales.ValeBaseDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.miembro.MiembroInfoActDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.EstadoCanjeVale;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.ValeDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.RegistroValeClienteDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.ValeClienteDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.*;
 import org.soygaia.msvc.gaiaclub.models.entity.*;
 import org.soygaia.msvc.gaiaclub.repositories.*;
 
@@ -38,8 +36,37 @@ public class ValesService {
     @Inject
     private PuntosService puntosService;
 
-    public List<ValeClienteEntity> valesPorCliente(Long idMiembroClub) {
-        return valeClienteRepository.findValesCliente(idMiembroClub);
+    public List<ValeClienteEcommerceDTO> valesPorCliente(Long idMiembroClub) {
+
+        List<ValeClienteEntity> listVales = valeClienteRepository.findValesCliente(idMiembroClub);
+
+        return listVales.stream().map(v -> {
+
+            ValePeriodoEntity vp = v.getValePeriodo();
+            ValeEntity valeBase = vp.getVale();
+
+            return new ValeClienteEcommerceDTO(
+                    vp.getId(),
+                    vp.getId(),
+                    v.getMiembro().getId(),
+                    v.getFechaCaducidad().toString(),
+                    v.getValorPuntos(),
+                    new ValePeriodoEcommerceDTO(
+                            vp.getId(),
+                            valeBase.getValorSoles(),
+                            valeBase.getNombre(),
+                            valeBase.getDescripcion(),
+                            valeBase.getVigenciaDias(),
+                            valeBase.getPuntosRequeridos(),
+                            vp.getPeriodo().getId()
+                    )
+            );
+        }).toList();
+    }
+
+    public List<ValeClienteDTO> valesClientePeriodo(Long idMiembro, Long idPeriodo){
+        List<ValeClienteEntity> listVales = valeClienteRepository.findValesClientePeriodo(idMiembro, idPeriodo);
+        return listVales.stream().map(this::convertirADTO).collect(Collectors.toList());
     }
 
     public MiembroInfoActDTO guardarValeCliente(Long miembroId, Long valePeriodoId) {
@@ -76,127 +103,184 @@ public class ValesService {
         ValeClienteEntity.EstadoValeCliente estadoValeCliente = vc.getEstado();
         if(estadoValeCliente!= ValeClienteEntity.EstadoValeCliente.USADO && estadoValeCliente!= ValeClienteEntity.EstadoValeCliente.CADUCADO){
             vc.setEstado(ValeClienteEntity.EstadoValeCliente.USADO);
+            vc.setFechaAplicacion(LocalDate.now());
             return new EstadoCanjeVale(true, convertirADTO(vc));
         }
         return new EstadoCanjeVale(false, convertirADTO(vc));
     }
 
     private ValeClienteDTO convertirADTO(ValeClienteEntity v) {
-        ValeClienteDTO dto = new ValeClienteDTO();
-        dto.setIdValeCliente(v.getId());
-        dto.setIdMiembro(v.getMiembro().getId());
-        dto.setFechaCaducidad(v.getFechaCaducidad());
-        dto.setPuntos(v.getValorPuntos());
+        ValePeriodoEntity valePeriodo = v.getValePeriodo();
+        ValeEntity valeBase = valePeriodo.getVale();
 
-        ValePeriodoEntity vp = v.getValePeriodo();
-        dto.setIdValePeriodo(vp.getId());
-
-        dto.setVale(new ValeDTO(
-                vp.getId(),
-                vp.getVale().getValorSoles(),
-                vp.getVale().getNombre(),
-                vp.getVale().getDescripcion(),
-                vp.getVale().getVigenciaDias(),
-                vp.getVale().getPuntosRequeridos(),
-                vp.getPeriodo().getId()
-        ));
-        return dto;
+        return new ValeClienteDTO(
+                v.getId(),
+                valePeriodo.getId(),
+                v.getMiembro().getId(),
+                v.getFechaCaducidad(),
+                v.getValorPuntos(),
+                new ValePeriodoDTO(
+                        valePeriodo.getId(),
+                        valePeriodo.getPeriodo().getId(),
+                        valePeriodo.getActivo(),
+                        new ValeBaseDTO(
+                                valeBase.getId(),
+                                valeBase.getValorSoles(),
+                                valeBase.getNombre(),
+                                valeBase.getDescripcion(),
+                                valeBase.getVigenciaDias(),
+                                valeBase.getPuntosRequeridos()
+                        )
+                )
+        );
     }
 
-    // Listar todos los vales base (sin importar el periodo)
-    public List<ValeDTO> listarVales() {
+    // Listar todos los vales base
+    public List<ValeBaseDTO> listarVales() {
         return valeRepository.listAll().stream()
-                .map(v -> new ValeDTO(
+                .map(v -> new ValeBaseDTO(
                         v.getId(),
                         v.getValorSoles(),
                         v.getNombre(),
                         v.getDescripcion(),
                         v.getVigenciaDias(),
-                        v.getPuntosRequeridos(),
-                        null // sin periodo
+                        v.getPuntosRequeridos()
                 ))
                 .collect(Collectors.toList());
     }
 
     // Listar vales activos asignados a un periodo específico
-    public List<ValeDTO> listarValesPorPeriodo(Long periodoId) {
-        List<ValePeriodoEntity> valesPeriodo = valePeriodoRepository.find("periodo.id", periodoId).list();
+    public List<ValePeriodoEcommerceDTO> listarValesActivosPorPeriodo(Long periodoId) {
+        List<ValePeriodoEntity> valesPeriodo = valePeriodoRepository.find("periodo.id=?1 AND activo =?2", periodoId, true).list();
 
         return valesPeriodo.stream().map(vp -> {
-            ValeEntity v = vp.getVale();
-            return new ValeDTO(
-                    v.getId(),
-                    v.getValorSoles(),
-                    v.getNombre(),
-                    v.getDescripcion(),
-                    v.getVigenciaDias(),
-                    v.getPuntosRequeridos(),
+            ValeEntity valeBase = vp.getVale();
+            return new ValePeriodoEcommerceDTO(
+                    vp.getId(),
+                    valeBase.getValorSoles(),
+                    valeBase.getNombre(),
+                    valeBase.getDescripcion(),
+                    valeBase.getVigenciaDias(),
+                    valeBase.getPuntosRequeridos(),
                     vp.getPeriodo().getId()
             );
         }).collect(Collectors.toList());
     }
 
+    // Listar vales activos asignados a un periodo específico
+    public List<ValePeriodoDTO> listarValesPorPeriodo(Long periodoId) {
+        List<ValePeriodoEntity> valesPeriodo = valePeriodoRepository.find("periodo.id=?1", periodoId).list();
 
-    // Crear nuevo vale base
-    public ValeEntity crearVale(ValeDTO dto) {
+        return valesPeriodo.stream().map(vp -> {
+            ValeEntity valeBase = vp.getVale();
+            return new ValePeriodoDTO(
+                    vp.getId(),
+                    vp.getPeriodo().getId(),
+                    vp.getActivo(),
+                    new ValeBaseDTO(
+                            valeBase.getId(),
+                            valeBase.getValorSoles(),
+                            valeBase.getNombre(),
+                            valeBase.getDescripcion(),
+                            valeBase.getVigenciaDias(),
+                            valeBase.getPuntosRequeridos()
+                    )
+            );
+        }).collect(Collectors.toList());
+    }
+
+    // Crear nuevo vale
+    public ValePeriodoDTO crearVale(ValePeriodoDTO dto) {
         ValeEntity vale = new ValeEntity();
-        vale.setNombre("Vale por S/." + dto.getDescuentoSoles());
-        vale.setDescripcion("Válido hasta " + dto.getVigencia() + " días después del canje");
-        vale.setValorSoles(dto.getDescuentoSoles());
-        vale.setPuntosRequeridos(dto.getPuntosRequeridos());
-        vale.setVigenciaDias(dto.getVigencia());
+        vale.setNombre("Vale por S/." + dto.getValeBase().getDescuentoSoles());
+        vale.setDescripcion("Válido hasta " + dto.getValeBase().getVigencia() + " días después del canje");
+        vale.setValorSoles(dto.getValeBase().getDescuentoSoles());
+        vale.setPuntosRequeridos(dto.getValeBase().getPuntosRequeridos());
+        vale.setVigenciaDias(dto.getValeBase().getVigencia());
         valeRepository.persist(vale);
         ValePeriodoEntity vp = new ValePeriodoEntity();
         vp.setVale(vale);
         vp.setPeriodo(periodoRepository.findById(dto.getPeriodoId()));
         vp.setActivo(true);
         valePeriodoRepository.persist(vp);
-        return vale;
+        return new ValePeriodoDTO(
+                vp.getId(),
+                vp.getPeriodo().getId(),
+                vp.getActivo(),
+                new ValeBaseDTO(
+                        vale.getId(),
+                        vale.getValorSoles(),
+                        vale.getNombre(),
+                        vale.getDescripcion(),
+                        vale.getVigenciaDias(),
+                        vale.getPuntosRequeridos()
+                )
+        );
     }
 
     // Asignar vale a un periodo
-    public ValePeriodoEntity asignarValeAPeriodo(Long valeId, Long periodoId) {
-        ValeEntity vale = valeRepository.findById(valeId);
+    public ValePeriodoDTO asignarValeAPeriodo(Long valeBaseId, Long periodoId) {
+        ValeEntity valeBase = valeRepository.findById(valeBaseId);
         PeriodoEntity periodo = periodoRepository.findById(periodoId);
 
-        if (vale == null || periodo == null) {
+        if (valeBase == null || periodo == null) {
             throw new IllegalArgumentException("Vale o Periodo no encontrado");
         }
 
         ValePeriodoEntity vp = new ValePeriodoEntity();
-        vp.setVale(vale);
+        vp.setVale(valeBase);
         vp.setPeriodo(periodo);
         vp.setActivo(true);
         valePeriodoRepository.persist(vp);
-        return vp;
+        return new ValePeriodoDTO(
+                vp.getId(),
+                vp.getPeriodo().getId(),
+                vp.getActivo(),
+                new ValeBaseDTO(
+                        valeBase.getId(),
+                        valeBase.getValorSoles(),
+                        valeBase.getNombre(),
+                        valeBase.getDescripcion(),
+                        valeBase.getVigenciaDias(),
+                        valeBase.getPuntosRequeridos()
+                )
+        );
     }
 
-    // Editar vale base
-    public ValeEntity editarVale(Long id, ValeDTO dto) {
-        ValeEntity vale = valeRepository.findById(id);
-        if (vale == null) throw new NotFoundException("Vale no encontrado");
-
-        vale.setNombre(dto.getNombreVale());
-        vale.setDescripcion(dto.getDescripcionVale());
-        vale.setValorSoles(dto.getDescuentoSoles());
-        vale.setPuntosRequeridos(dto.getPuntosRequeridos());
-        vale.setVigenciaDias(dto.getVigencia());
-        return vale;
-    }
-
-    // Eliminar vale base (si no está asociado a ningún periodo)
-    public void eliminarVale(Long id) {
-        ValeEntity vale = valeRepository.findById(id);
-        if (vale != null) {
-            valeRepository.delete(vale);
-        }
-    }
-
-    // Eliminar vínculo entre vale y periodo
-    public void eliminarAsignacionDePeriodo(Long valePeriodoId) {
+    public ValePeriodoDTO setValePeriodo(Long valePeriodoId){
         ValePeriodoEntity vp = valePeriodoRepository.findById(valePeriodoId);
-        if (vp != null) {
-            valePeriodoRepository.delete(vp);
+        vp.setActivo(!vp.getActivo());
+        ValeEntity vale = vp.getVale();
+        return new ValePeriodoDTO(
+                vp.getId(),
+                vp.getPeriodo().getId(),
+                vp.getActivo(),
+                new ValeBaseDTO(
+                        vale.getId(),
+                        vale.getValorSoles(),
+                        vale.getNombre(),
+                        vale.getDescripcion(),
+                        vale.getVigenciaDias(),
+                        vale.getPuntosRequeridos()
+                )
+        );
+    }
+
+    public DeleteResponse eliminarValePeriodo(Long valePeriodoID){
+        ValePeriodoEntity vp = valePeriodoRepository.findById(valePeriodoID);
+
+        if (vp == null) {
+            return new DeleteResponse(-1L, "Vale no encontrado", false);
         }
+        long cantidadCanjes = valeClienteRepository.count("valePeriodo.id", valePeriodoID);
+
+        if (cantidadCanjes > 0) {
+            vp.setActivo(false);
+
+            return new DeleteResponse(valePeriodoID, "Tiene canjes registrados. Se inactivó el vale.", false);
+        }
+
+        valePeriodoRepository.deleteById(valePeriodoID);
+        return new DeleteResponse(valePeriodoID, "Vale eliminado", true);
     }
 }

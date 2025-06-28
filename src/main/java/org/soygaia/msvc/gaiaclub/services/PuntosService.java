@@ -8,11 +8,14 @@ import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hibernate.service.spi.ServiceException;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panelcliente.PuntoMovimientoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.GeneralInfoAdminDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.ecommerce.OrdenDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.puntos.PuntosDisponiblesDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.puntos.PuntosRegistroDTO;
+import org.soygaia.msvc.gaiaclub.models.entity.GeneralInfoEntity;
 import org.soygaia.msvc.gaiaclub.models.entity.MiembroClubEntity;
 import org.soygaia.msvc.gaiaclub.models.entity.PuntosEntity;
+import org.soygaia.msvc.gaiaclub.repositories.GeneralInfoRepository;
 import org.soygaia.msvc.gaiaclub.repositories.MiembroRepository;
 import org.soygaia.msvc.gaiaclub.repositories.OrdenRepository;
 import org.soygaia.msvc.gaiaclub.repositories.PuntosRepository;
@@ -36,16 +39,24 @@ public class PuntosService {
     @PersistenceContext
     EntityManager entityManager;
 
+    @Inject
+    GeneralInfoRepository generalInfoRepository;
 
-
-    @ConfigProperty(name = "gaia.puntos.meses-vigencia", defaultValue = "10")
     int mesesVigencia;
-    @ConfigProperty(name = "gaia.puntos.puntos-por-compra", defaultValue = "10")
     int puntosPorCompra;
-    @ConfigProperty(name = "gaia.puntos.valor-de-compra", defaultValue = "10")
-    long valorCompra;
-    @ConfigProperty(name = "gaia.puntos.valor-bienvenida", defaultValue = "5")
+    double valorCompra;
     int bonificacionBienvenida;
+    int alertVencimiento;
+
+    public PuntosService(){
+        GeneralInfoRepository gi=new GeneralInfoRepository();
+        GeneralInfoEntity generalInfo = gi.findAll(Sort.descending("id")).firstResult();
+        mesesVigencia = generalInfo.getPuntosVigenciaMeses();
+        puntosPorCompra = generalInfo.getPuntosPorCompra();
+        valorCompra = generalInfo.getValorCompra();
+        bonificacionBienvenida = generalInfo.getPuntosBienvenida();
+        alertVencimiento = generalInfo.getAlertaVencimiento();
+    }
 
     public PuntosEntity registrarPuntosIn(PuntosRegistroDTO puntos){
 
@@ -98,10 +109,10 @@ public class PuntosService {
 
     public Long getTotalPuntosCercanosVencerPorCliente(Long miembroId) {
         return entityManager.createQuery(
-                        "SELECT SUM(p.totalPuntos) FROM PuntosEntity p WHERE p.estado = 'VIGENTE' AND p.miembro.id = :miembroId AND p.fechaCaducidad <= :proxSemana",
+                        "SELECT SUM(p.totalPuntos) FROM PuntosEntity p WHERE p.estado = 'VIGENTE' AND p.miembro.id = :miembroId AND p.fechaCaducidad <= :alertaVencimiento",
                         Long.class)
                 .setParameter("miembroId", miembroId)
-                .setParameter("proxSemana", LocalDate.now().plusDays(15))
+                .setParameter("alertaVencimiento", LocalDate.now().plusDays(alertVencimiento))
                 .getSingleResult();
     }
 

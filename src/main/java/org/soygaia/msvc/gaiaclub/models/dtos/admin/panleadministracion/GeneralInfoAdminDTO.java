@@ -6,6 +6,7 @@ public class GeneralInfoAdminDTO {
     private double valorCompra;
     private int puntosVigenciaMeses;
     private double valorPuntos;
+    private int alertaVencimiento;
 
     public int getPuntosBienvenida() {
         return puntosBienvenida;
@@ -45,5 +46,13 @@ public class GeneralInfoAdminDTO {
 
     public void setValorPuntos(double valorPuntos) {
         this.valorPuntos = valorPuntos;
+    }
+
+    public int getAlertaVencimiento() {
+        return alertaVencimiento;
+    }
+
+    public void setAlertaVencimiento(int alertaVencimiento) {
+        this.alertaVencimiento = alertaVencimiento;
     }
 }

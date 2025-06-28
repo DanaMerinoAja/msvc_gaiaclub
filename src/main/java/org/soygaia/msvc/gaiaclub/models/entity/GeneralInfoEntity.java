@@ -2,6 +2,8 @@ package org.soygaia.msvc.gaiaclub.models.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "t_general_info")
 public class GeneralInfoEntity {
@@ -23,6 +25,12 @@ public class GeneralInfoEntity {
 
   @Column(name = "gi_valorpuntos", nullable = false)
   private double valorPuntos;
+
+  @Column(name = "gi_fechaActualizacion",nullable = false)
+  private LocalDate fechaActualizacion;
+
+  @Column(name = "gi_alerta_vencimiento",nullable = false)
+  private int alertaVencimiento;
 
   public Long getId() {
     return id;
@@ -70,5 +78,21 @@ public class GeneralInfoEntity {
 
   public void setValorPuntos(double valorPuntos) {
     this.valorPuntos = valorPuntos;
+  }
+
+  public LocalDate getFechaActualizacion() {
+    return fechaActualizacion;
+  }
+
+  public void setFechaActualizacion(LocalDate fechaActualizacion) {
+    this.fechaActualizacion = fechaActualizacion;
+  }
+
+  public int getAlertaVencimiento() {
+    return alertaVencimiento;
+  }
+
+  public void setAlertaVencimiento(int alertaVencimiento) {
+    this.alertaVencimiento = alertaVencimiento;
   }
 }

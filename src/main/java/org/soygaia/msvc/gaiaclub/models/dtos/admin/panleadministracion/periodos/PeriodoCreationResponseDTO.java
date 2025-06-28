@@ -1,4 +1,4 @@
-package org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion;
+package org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.periodos;
 
 import org.soygaia.msvc.gaiaclub.models.entity.PeriodoEntity;
 

@@ -1,7 +1,7 @@
 package org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo;
 
-import org.soygaia.msvc.gaiaclub.models.dtos.GeneralInfoDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.GeneralInfoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.periodos.PeriodoDTO;
 
 public class PeriodoResponseDTO {
     private boolean success;

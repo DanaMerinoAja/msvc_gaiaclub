@@ -20,6 +20,9 @@ public class MiembroResource {
 
     @Inject
     MiembroService miembroService;
+    /*
+    Ecommerce
+     */
 
     @GET
     public Response obtenerCliente(@QueryParam("dni") @DefaultValue("0") Long dni, @QueryParam("correo") @DefaultValue("-") String correo){
@@ -35,12 +38,20 @@ public class MiembroResource {
         MiembroGetDTO miembroClub = miembroService.registrarMiembro(miembroRegistroDTO);
         return Response.status(Response.Status.OK).entity(miembroClub).build();
     }
+    /*
+    Admin panel
+     */
 
     @GET
-    @Path("puntos-miembros")
+    @Path("/admin")
     //aún no se como funciona ;) @RequestScoped
     public Response obtenerClientesAdmin(){
+        return Response.status(Response.Status.OK).entity(miembroService.obtenerMiembros()).build();
+    }
 
-        return Response.status(Response.Status.NOT_FOUND).build();
+    @PUT
+    @Path("/edit")
+    public Response editarCliente(MiembroGetDTO miembroGetDTO){
+        return Response.status(Response.Status.OK).entity(miembroService.editarMiembro(miembroGetDTO)).build();
     }
 }

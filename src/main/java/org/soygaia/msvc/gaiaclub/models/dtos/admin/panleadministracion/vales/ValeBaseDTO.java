@@ -1,46 +1,28 @@
-package org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales;
+package org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.vales;
 
-public class ValeDTO {
-    private Long valeId;
+public class ValeBaseDTO {
+    private Long valeBaseId;
     private double descuentoSoles;
     private String nombreVale;
     private String descripcionVale;
     private int vigencia;
     private int puntosRequeridos;
-    private Long periodoId;
 
-    public ValeDTO(Long valeId, double descuentoSoles, String nombreVale, String descripcionVale, int vigencia, int puntosRequeridos, Long periodoId) {
-        this.valeId = valeId;
+    public ValeBaseDTO(Long valeBaseId, double descuentoSoles, String nombreVale, String descripcionVale, int vigencia, int puntosRequeridos) {
+        this.valeBaseId = valeBaseId;
         this.descuentoSoles = descuentoSoles;
         this.nombreVale = nombreVale;
         this.descripcionVale = descripcionVale;
         this.vigencia = vigencia;
         this.puntosRequeridos = puntosRequeridos;
-        this.periodoId = periodoId;
     }
 
-    public Long getPeriodoId() {
-        return periodoId;
+    public Long getValeBaseId() {
+        return valeBaseId;
     }
 
-    public void setPeriodoId(Long periodoId) {
-        this.periodoId = periodoId;
-    }
-
-    public int getVigencia() {
-        return vigencia;
-    }
-
-    public void setVigencia(int vigencia) {
-        this.vigencia = vigencia;
-    }
-
-    public Long getValeId() {
-        return valeId;
-    }
-
-    public void setValeId(Long valeId) {
-        this.valeId = valeId;
+    public void setValeBaseId(Long valeBaseId) {
+        this.valeBaseId = valeBaseId;
     }
 
     public double getDescuentoSoles() {
@@ -65,6 +47,14 @@ public class ValeDTO {
 
     public void setDescripcionVale(String descripcionVale) {
         this.descripcionVale = descripcionVale;
+    }
+
+    public int getVigencia() {
+        return vigencia;
+    }
+
+    public void setVigencia(int vigencia) {
+        this.vigencia = vigencia;
     }
 
     public int getPuntosRequeridos() {

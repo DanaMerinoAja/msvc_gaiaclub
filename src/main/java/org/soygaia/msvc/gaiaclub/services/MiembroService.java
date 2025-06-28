@@ -12,7 +12,9 @@ import org.soygaia.msvc.gaiaclub.models.entity.MiembroClubEntity;
 import org.soygaia.msvc.gaiaclub.repositories.MiembroRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @ApplicationScoped
@@ -25,9 +27,6 @@ public class MiembroService {
     PuntosService puntosService;
     @PersistenceContext
     EntityManager entityManager;
-
-    @ConfigProperty(name = "gaia.puntos.valor-bienvenida", defaultValue = "5")
-    int bonificacionBienvenida;
 //
 //    public List<MiembroResumenDTO> listarMiembrosConResumen(){
 //
@@ -63,7 +62,7 @@ public class MiembroService {
             miembroGetDTO.setFechaRegistro(miembroClubEntity.getFechaRegistro());
             miembroGetDTO.setClienteId(miembroClubEntity.getClienteId());
             miembroGetDTO.setPuntosCercaVencer(0);
-            miembroGetDTO.setPuntosDisponibles(bonificacionBienvenida);
+            miembroGetDTO.setPuntosDisponibles(puntosService.bonificacionBienvenida);
         } else {
             miembroClubEntity = opMiembro.get();
 
@@ -104,4 +103,36 @@ public class MiembroService {
         return Optional.empty();
     }
 
+    public List<MiembroGetDTO> obtenerMiembros(){
+        List<MiembroClubEntity> listMiembros = miembroRepository.listAll();
+        return listMiembros.stream().map(miembroClub -> {
+            MiembroGetDTO miembroGetDTO = new MiembroGetDTO();
+            miembroGetDTO.setIdMiembro(miembroClub.getId());
+            miembroGetDTO.setCorreo(miembroClub.getCorreo());
+            miembroGetDTO.setDni(miembroClub.getDni());
+            miembroGetDTO.setTelefono(miembroClub.getTelefono());
+            miembroGetDTO.setNombresCompletos(miembroClub.getNombresCompletos());
+            miembroGetDTO.setFechaRegistro(miembroClub.getFechaRegistro());
+            miembroGetDTO.setClienteId(miembroClub.getClienteId());
+            Long puntosPorVencer = puntosService.getTotalPuntosCercanosVencerPorCliente(miembroGetDTO.getIdMiembro());
+            Long puntosDisponibles = puntosService.getTotalPuntosDisponiblesPorCliente(miembroGetDTO.getIdMiembro());
+            miembroGetDTO.setPuntosCercaVencer(puntosPorVencer != null ? puntosPorVencer:0);
+            miembroGetDTO.setPuntosDisponibles(puntosDisponibles !=null ? puntosDisponibles:0);
+            return miembroGetDTO;
+        }).collect(Collectors.toList());
+    }
+
+    public MiembroGetDTO editarMiembro(MiembroGetDTO miembro){
+        MiembroClubEntity miembroClub = miembroRepository.findById(miembro.getIdMiembro());
+        miembroClub.setDni(miembro.getDni());
+        miembroClub.setNombresCompletos(miembro.getNombresCompletos());
+        miembroClub.setCorreo(miembro.getCorreo());
+        miembroClub.setTelefono(miembro.getTelefono());
+
+        miembro.setCorreo(miembroClub.getCorreo());
+        miembro.setTelefono(miembroClub.getTelefono());
+        miembro.setNombresCompletos(miembroClub.getNombresCompletos());
+
+        return miembro;
+    }
 }

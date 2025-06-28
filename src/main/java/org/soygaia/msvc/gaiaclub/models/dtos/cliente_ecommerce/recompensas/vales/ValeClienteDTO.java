@@ -8,7 +8,18 @@ public class ValeClienteDTO {
     private Long idMiembro;
     private LocalDate fechaCaducidad;
     private Integer puntos;
-    private ValeDTO vale;
+    private ValePeriodoDTO vale;
+
+
+
+    public ValeClienteDTO(Long idValeCliente, Long idValePeriodo, Long idMiembro, LocalDate fechaCaducidad, Integer puntos, ValePeriodoDTO vale) {
+        this.idValeCliente = idValeCliente;
+        this.idValePeriodo = idValePeriodo;
+        this.idMiembro = idMiembro;
+        this.fechaCaducidad = fechaCaducidad;
+        this.puntos = puntos;
+        this.vale = vale;
+    }
 
     public Integer getPuntos() {
         return puntos;
@@ -50,11 +61,11 @@ public class ValeClienteDTO {
         this.fechaCaducidad = fechaCaducidad;
     }
 
-    public ValeDTO getVale() {
+    public ValePeriodoDTO getVale() {
         return vale;
     }
 
-    public void setVale(ValeDTO vale) {
+    public void setVale(ValePeriodoDTO vale) {
         this.vale = vale;
     }
 }

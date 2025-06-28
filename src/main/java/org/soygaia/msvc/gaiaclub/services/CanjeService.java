@@ -4,8 +4,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.hibernate.service.spi.ServiceException;
@@ -22,10 +20,7 @@ import org.soygaia.msvc.gaiaclub.repositories.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Transactional
@@ -72,7 +67,6 @@ public class CanjeService {
             canjeEntity.setFecha(LocalDate.now());
             canjeEntity.setPeriodo(periodoRepository.findById(canje.getPeriodoId()));
             canjeEntity.setEstado(CanjeEntity.EstadoCanje.POR_ENTREGAR);
-            canjeEntity.setTipoCanje(CanjeEntity.TipoCanje.RECOMPENSA);
 
             canjeRepository.persist(canjeEntity);
 
@@ -162,40 +156,50 @@ public class CanjeService {
 
     }
 
-    public List<CanjeResumenDTO> listarCanjes(LocalDate desde, LocalDate hasta, String tipo) {
-        String jpql = "SELECT c FROM CanjeEntity c WHERE 1=1";
-        Map<String, Object> params = new HashMap<>();
-
-        if (desde != null) {
-            jpql += " AND c.fecha >= :desde";
-            params.put("desde", desde);
-        }
-
-        if (hasta != null) {
-            jpql += " AND c.fecha <= :hasta";
-            params.put("hasta", hasta);
-        }
-
-        if (tipo != null && !tipo.isBlank()) {
-            jpql += " AND c.tipoCanje = :tipo";
-            params.put("tipo", CanjeEntity.TipoCanje.valueOf(tipo.toUpperCase()));
-        }
-
-        TypedQuery<CanjeEntity> query = entityManager.createQuery(jpql + " ORDER BY c.fecha DESC", CanjeEntity.class);
-        params.forEach(query::setParameter);
-
-        return query.getResultList().stream().map(c -> {
-            int totalPuntos = c.getDetallesCanje().stream()
-                    .mapToInt(DetalleCanjeEntity::getPuntosDetCanje)
-                    .sum();
-            return new CanjeResumenDTO(c.getId(), c.getFecha(), c.getTipoCanje().name(), totalPuntos, c.getEstado().name());
-        }).collect(Collectors.toList());
+    public List<CanjeResumenDTO> listaCanjesPorEntregar(){
+        return canjeRepository.canjesPorEntregarResumen();
     }
 
-    private class stockID{
-        Integer stock;
-        Long idRec;
 
+    public List<DetalleRecompensaCanjeDTO> detallesCanje(Long idCanje){
+        return detalleCanjeRepository.obtenerDetalleRecompensas(idCanje);
+    }
+
+    public CanjeResumenDTO cambiarEstado(CanjeResumenDTO dto){
+        CanjeEntity canjeEntity = canjeRepository.findById(dto.getId());
+
+        String estado = dto.getEstado();
+
+        CanjeEntity.EstadoCanje estadoCanje = estado.equals(CanjeEntity.EstadoCanje.ENTREGADO.toString()) ? CanjeEntity.EstadoCanje.ENTREGADO:
+                (estado.equals(CanjeEntity.EstadoCanje.CANCELADO.toString()) ? CanjeEntity.EstadoCanje.CANCELADO: CanjeEntity.EstadoCanje.POR_ENTREGAR);
+
+        canjeEntity.setEstado(estadoCanje);
+
+        dto.setEstado(canjeEntity.getEstado().toString());
+
+        return dto;
+    }
+
+    public List<CanjeResumenDTO> listaAllCanjesPaginado(int page, int size) {
+        return entityManager.createQuery("""
+                            SELECT new org.soygaia.msvc.gaiaclub.models.dtos.admin.panelcanjes.CanjeResumenDTO(
+                                c.id,
+                                m.nombresCompletos,
+                                m.id,
+                                c.fecha,
+                                SUM(d.puntosDetCanje),
+                                c.estado
+                            )
+                            FROM CanjeEntity c
+                            JOIN c.miembro m
+                            JOIN c.detallesCanje d
+                            GROUP BY c.id, m.nombresCompletos, m.id, c.fecha, c.estado
+                            ORDER BY c.fecha DESC
+                        """
+                , CanjeResumenDTO.class)
+                .setFirstResult(page * size)
+                .setMaxResults(size)
+                .getResultList();
     }
 
 

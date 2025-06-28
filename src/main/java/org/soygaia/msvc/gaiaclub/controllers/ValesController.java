@@ -6,14 +6,10 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.vales.ValeBaseDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.miembro.MiembroInfoActDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.EstadoCanjeVale;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.ValeDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.RegistroValeClienteDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.ValeClienteDTO;
-import org.soygaia.msvc.gaiaclub.models.entity.ValeClienteEntity;
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.vales.*;
 import org.soygaia.msvc.gaiaclub.models.entity.ValeEntity;
-import org.soygaia.msvc.gaiaclub.models.entity.ValePeriodoEntity;
 import org.soygaia.msvc.gaiaclub.services.ValesService;
 
 import java.util.List;
@@ -27,27 +23,14 @@ public class ValesController {
     @Inject
     ValesService valesService;
 
+    /*
+    Métodos ecommerce
+     */
+
     @GET
     @Path("/{idMiembro}")
     public Response valesCliente(@PathParam("idMiembro") Long idMiembro) {
-        List<ValeClienteEntity> listVales = valesService.valesPorCliente(idMiembro);
-
-        if (listVales.isEmpty()) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        List<ValeClienteDTO> listValesCliente = listVales.stream().map(v -> {
-            ValeClienteDTO valeClienteDTO = new ValeClienteDTO();
-            valeClienteDTO.setIdMiembro(v.getMiembro().getId());
-            valeClienteDTO.setIdValePeriodo(v.getValePeriodo().getId());
-            valeClienteDTO.setIdValeCliente(v.getId());
-            ValePeriodoEntity vale = v.getValePeriodo();
-            valeClienteDTO.setVale(new ValeDTO(vale.getId(), vale.getVale().getValorSoles(), vale.getVale().getNombre(), vale.getVale().getDescripcion(), vale.getVale().getVigenciaDias(), vale.getVale().getPuntosRequeridos(), vale.getPeriodo().getId()));
-            valeClienteDTO.setFechaCaducidad(v.getFechaCaducidad());
-            return valeClienteDTO;
-        }).toList();
-
-        return Response.status(Response.Status.OK).entity(listValesCliente).build();
+        return Response.status(Response.Status.OK).entity(valesService.valesPorCliente(idMiembro)).build();
     }
 
     @POST
@@ -64,56 +47,58 @@ public class ValesController {
         return Response.status(Response.Status.OK).entity(vcDTO).build();
     }
 
+    // Listar vales activos asignados a un periodo
     @GET
-    public List<ValeDTO> listarVales() {
+    @Path("/periodo/{periodoId}")
+    public List<ValePeriodoEcommerceDTO> listarValesActivosPorPeriodo(@PathParam("periodoId") Long periodoId) {
+        return valesService.listarValesActivosPorPeriodo(periodoId);
+    }
+
+    /*
+    Métodos admin
+     */
+
+    @GET
+    @Path("/periodo-admin/{periodoId}")
+    public List<ValePeriodoDTO> listarValesPorPeriodo(@PathParam("periodoId") Long periodoId) {
+        return valesService.listarValesPorPeriodo(periodoId);
+    }
+
+    @GET
+    @Path("/base")
+    public List<ValeBaseDTO> listarVales() {
         return valesService.listarVales();
     }
 
-    // Listar vales asignados a un periodo
     @GET
-    @Path("/periodo/{periodoId}")
-    public List<ValeDTO> listarValesPorPeriodo(@PathParam("periodoId") Long periodoId) {
-        return valesService.listarValesPorPeriodo(periodoId);
+    @Path("/vales-miembro/{idMiembro}/{idPeriodo}")
+    public List<ValeClienteDTO> listarValesMiembroAdmin(@PathParam("idMiembro") Long idMiembro, @PathParam("idPeriodo") Long idPeriodo) {
+        return valesService.valesClientePeriodo(idMiembro, idPeriodo);
     }
 
     // Crear nuevo vale base
     @POST
-    public Response crearVale(ValeDTO dto) {
-        ValeEntity nuevo = valesService.crearVale(dto);
-        return Response.status(Response.Status.CREATED).entity(nuevo).build();
+    public Response crearValePeriodo(ValePeriodoDTO dto) {
+        return Response.status(Response.Status.CREATED).entity(valesService.crearVale(dto)).build();
     }
 
-    // 4. Editar vale existente
-    @PUT
-    @Path("/{id}")
-    public Response editarVale(@PathParam("id") Long id, ValeDTO dto) {
-        ValeEntity actualizado = valesService.editarVale(id, dto);
-        return Response.ok(actualizado).build();
-    }
-
-    // 5. Eliminar vale base
-    @DELETE
-    @Path("/{id}")
-    public Response eliminarVale(@PathParam("id") Long id) {
-        valesService.eliminarVale(id);
-        return Response.noContent().build();
-    }
-
-    // 6. Asignar vale a periodo
+    // Asignar vale a periodo
     @POST
     @Path("/asignar")
-    public Response asignarValeAPeriodo(@QueryParam("valeId") Long valeId,
-                                        @QueryParam("periodoId") Long periodoId) {
-        ValePeriodoEntity asignado = valesService.asignarValeAPeriodo(valeId, periodoId);
-        return Response.status(Response.Status.CREATED).entity(asignado.getId()).build();
+    public Response asignarValeAPeriodo(@RequestBody ValePeriodoDTO valePeriodoDTO) {
+        return Response.status(Response.Status.CREATED).entity(valesService.asignarValeAPeriodo(valePeriodoDTO.getValeBase().getValeBaseId(), valePeriodoDTO.getPeriodoId())).build();
     }
 
-    // 7. Eliminar vínculo vale-periodo
+    // Desasignar vale a periodo
     @DELETE
-    @Path("/asignacion/{valePeriodoId}")
-    public Response eliminarAsignacionPeriodo(@PathParam("valePeriodoId") Long valePeriodoId) {
-        valesService.eliminarAsignacionDePeriodo(valePeriodoId);
-        return Response.noContent().build();
+    @Path("/desasignar/{valePeriodoId}")
+    public Response eliminarValeAPeriodo(@PathParam("valePeriodoId") Long valePeriodoId) {
+        return Response.status(Response.Status.OK).entity(valesService.eliminarValePeriodo(valePeriodoId)).build();
     }
 
+    @PUT
+    @Path("/set-estado")
+    public Response setEstadoValeAPeriodo(@RequestBody ValePeriodoDTO valePeriodo) {
+        return Response.status(Response.Status.OK).entity(valesService.setValePeriodo(valePeriodo.getValePeriodoId())).build();
+    }
 }

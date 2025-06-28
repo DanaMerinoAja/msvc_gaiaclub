@@ -8,5 +8,7 @@ import org.soygaia.msvc.gaiaclub.models.entity.ValePeriodoEntity;
 @ApplicationScoped
 @Transactional
 public class ValePeriodoRepository implements PanacheRepository<ValePeriodoEntity> {
-
+    public long valesActivosPorPeriodo(Long periodoId) {
+        return count("periodo.id = ?1 AND activo = true", periodoId);
+    }
 }

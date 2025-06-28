@@ -1,4 +1,4 @@
-package org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion;
+package org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.periodos;
 
 import java.time.LocalDate;
 
@@ -9,6 +9,17 @@ public class PeriodoDTO {
     private String descripcion;
     private String nombre;
     private Long idPeriodo;
+
+    public PeriodoDTO(LocalDate fechaFin, LocalDate fechaInicio, String descripcion, String nombre, Long idPeriodo) {
+        this.fechaFin = fechaFin;
+        this.fechaInicio = fechaInicio;
+        this.descripcion = descripcion;
+        this.nombre = nombre;
+        this.idPeriodo = idPeriodo;
+    }
+
+    public PeriodoDTO() {
+    }
 
     public Long getIdPeriodo() {
         return idPeriodo;

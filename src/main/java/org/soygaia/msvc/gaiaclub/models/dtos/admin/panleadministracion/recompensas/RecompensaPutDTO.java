@@ -1,29 +1,19 @@
-package org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas;
+package org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.recompensas;
 
-public class RecompensaDTO {
-
-    private Long idProducto;
-    private Long idPeriodo;
+public class RecompensaPutDTO {
+    private Long idRecompensa;
     private String nombre;
+    private String descripcion;
     private Double aporteSoles;
     private Integer puntosRequeridos;
     private Integer stock;
-    private String descripcion;
 
-    public Long getIdProducto() {
-        return idProducto;
+    public Long getIdRecompensa() {
+        return idRecompensa;
     }
 
-    public void setIdProducto(Long idProducto) {
-        this.idProducto = idProducto;
-    }
-
-    public Long getIdPeriodo() {
-        return idPeriodo;
-    }
-
-    public void setIdPeriodo(Long idPeriodo) {
-        this.idPeriodo = idPeriodo;
+    public void setIdRecompensa(Long idRecompensa) {
+        this.idRecompensa = idRecompensa;
     }
 
     public String getNombre() {

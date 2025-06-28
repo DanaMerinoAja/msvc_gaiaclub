@@ -59,12 +59,108 @@ public class RecompensaProductoDTO {
         }
     }
 
+    public Long getRecId() {
+        return recId;
+    }
+
+    public void setRecId(Long recId) {
+        this.recId = recId;
+    }
+
+    public Double getAporteSoles() {
+        return aporteSoles;
+    }
+
+    public void setAporteSoles(Double aporteSoles) {
+        this.aporteSoles = aporteSoles;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Long getRecProducto() {
+        return recProducto;
+    }
+
+    public void setRecProducto(Long recProducto) {
+        this.recProducto = recProducto;
+    }
+
     public BigDecimal getPrecioProducto() {
         return precioProducto;
     }
 
     public void setPrecioProducto(BigDecimal precioProducto) {
         this.precioProducto = precioProducto;
+    }
+
+    public String getNombreRecompensa() {
+        return nombreRecompensa;
+    }
+
+    public void setNombreRecompensa(String nombreRecompensa) {
+        this.nombreRecompensa = nombreRecompensa;
+    }
+
+    public int getPuntosRequeridos() {
+        return puntosRequeridos;
+    }
+
+    public void setPuntosRequeridos(int puntosRequeridos) {
+        this.puntosRequeridos = puntosRequeridos;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public Long getPeriodoId() {
+        return periodoId;
+    }
+
+    public void setPeriodoId(Long periodoId) {
+        this.periodoId = periodoId;
+    }
+
+    public String getNombreProducto() {
+        return nombreProducto;
+    }
+
+    public void setNombreProducto(String nombreProducto) {
+        this.nombreProducto = nombreProducto;
+    }
+
+    public String getSlugProducto() {
+        return slugProducto;
+    }
+
+    public void setSlugProducto(String slugProducto) {
+        this.slugProducto = slugProducto;
+    }
+
+    public String getAbreviaturaUnidadMedidaPres() {
+        return abreviaturaUnidadMedidaPres;
+    }
+
+    public void setAbreviaturaUnidadMedidaPres(String abreviaturaUnidadMedidaPres) {
+        this.abreviaturaUnidadMedidaPres = abreviaturaUnidadMedidaPres;
+    }
+
+    public String getUnidadMedidaVenta() {
+        return unidadMedidaVenta;
+    }
+
+    public void setUnidadMedidaVenta(String unidadMedidaVenta) {
+        this.unidadMedidaVenta = unidadMedidaVenta;
     }
 
     public String getPresentacion() {
@@ -91,46 +187,13 @@ public class RecompensaProductoDTO {
         this.marca = marca;
     }
 
-    public void setImagenUrl(String[] imagenUrl) {
-        this.imagenUrl = imagenUrl;
+    public String[] getImagenUrl() {
+        return imagenUrl;
     }
 
-    public Long getRecId() { return recId; }
-    public void setRecId(Long recId) { this.recId = recId; }
-
-    public Double getAporteSoles() { return aporteSoles; }
-    public void setAporteSoles(Double aporteSoles) { this.aporteSoles = aporteSoles; }
-
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-
-    public Long getRecProducto() { return recProducto; }
-    public void setRecProducto(Long recProducto) { this.recProducto = recProducto; }
-
-    public String getNombreRecompensa() { return nombreRecompensa; }
-    public void setNombreRecompensa(String nombreRecompensa) { this.nombreRecompensa = nombreRecompensa; }
-
-    public int getPuntosRequeridos() { return puntosRequeridos; }
-    public void setPuntosRequeridos(int puntosRequeridos) { this.puntosRequeridos = puntosRequeridos; }
-
-    public int getStock() { return stock; }
-    public void setStock(int stock) { this.stock = stock; }
-
-    public Long getPeriodoId() { return periodoId; }
-    public void setPeriodoId(Long periodoId) { this.periodoId = periodoId; }
-
-    public String getNombreProducto() { return nombreProducto; }
-    public void setNombreProducto(String nombreProducto) { this.nombreProducto = nombreProducto; }
-
-    public String getSlugProducto() { return slugProducto; }
-    public void setSlugProducto(String slugProducto) { this.slugProducto = slugProducto; }
-
-    public String getAbreviaturaUnidadMedidaPres() { return abreviaturaUnidadMedidaPres; }
-    public void setAbreviaturaUnidadMedidaPres(String abreviaturaUnidadMedidaPres) { this.abreviaturaUnidadMedidaPres = abreviaturaUnidadMedidaPres; }
-
-    public String getUnidadMedidaVenta() { return unidadMedidaVenta; }
-    public void setUnidadMedidaVenta(String unidadMedidaVenta) { this.unidadMedidaVenta = unidadMedidaVenta; }
-
-    public String[] getImagenUrl() { return imagenUrl; }
-    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl.split(","); }
+    public void setImagenUrl(String imagenUrls) {
+        if (imagenUrls != null && !imagenUrls.isBlank()) {
+            this.imagenUrl = imagenUrls.split(",");
+        }
+    }
 }

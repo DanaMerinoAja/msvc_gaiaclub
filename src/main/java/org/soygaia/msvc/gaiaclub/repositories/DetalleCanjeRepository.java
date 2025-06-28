@@ -51,12 +51,14 @@ public class DetalleCanjeRepository implements PanacheRepository<DetalleCanjeEnt
                  ppv.pvt_preciomaximo,
                  r.rec_aportesoles,
                  r.rec_puntosreq,
-                 d.cj_cantidadrec
+                 d.dcj_cantidadrec
             FROM gaiaadm.t_detalles_canje AS d
+            JOIN gaiaadm.t_canjes AS c ON d.dcj_canjepadre = c.cj_id
             JOIN gaiaadm.t_recompensas AS r ON d.dcj_recompensa = r.rec_id
             JOIN gaiaadm.t_producto AS prod ON r.rec_producto = prod.prd_id
             JOIN gaiaadm.t_precioventa AS ppv ON ppv.pvt_producto = prod.prd_id
             WHERE d.dcj_canjePadre = :idCanje
+            ORDER BY c.cj_fecha DESC
         """;
 
         List<Object[]> rows = entityManager.createNativeQuery(sql)

@@ -27,6 +27,9 @@ public class ValeClienteEntity {
     @Column(name = "vc_fecha_caducidad", nullable = false)
     private LocalDate fechaCaducidad;
 
+    @Column(name = "vc_fecha_aplicacion")
+    private LocalDate fechaAplicacion;
+
     @Column(name = "vc_valor_puntos", nullable = false)
     private Integer valorPuntos; // puntos usados en el momento del canje
 
@@ -78,6 +81,14 @@ public class ValeClienteEntity {
 
     public void setFechaCaducidad(LocalDate fechaCaducidad) {
         this.fechaCaducidad = fechaCaducidad;
+    }
+
+    public LocalDate getFechaAplicacion() {
+        return fechaAplicacion;
+    }
+
+    public void setFechaAplicacion(LocalDate fechaAplicacion) {
+        this.fechaAplicacion = fechaAplicacion;
     }
 
     public Integer getValorPuntos() {

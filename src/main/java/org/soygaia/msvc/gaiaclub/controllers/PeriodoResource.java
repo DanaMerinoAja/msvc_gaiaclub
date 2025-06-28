@@ -8,15 +8,13 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.GeneralInfoAdminDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoCreationResponseDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoCreationDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.periodos.PeriodoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.periodos.PeriodoCreationResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.periodos.PeriodoCreationDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.periodo.PeriodoResponseDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.PeriodoEntity;
 import org.soygaia.msvc.gaiaclub.services.GeneralInfoService;
 import org.soygaia.msvc.gaiaclub.services.PeriodoService;
-
-import java.util.Map;
 
 @Path("/periodo")
 @RequestScoped
@@ -30,16 +28,45 @@ public class PeriodoResource {
     @Inject
     GeneralInfoService generalInfoService;
 
+    /*
+    Endpoints de administración
+     */
+
     @POST
     @Path("/registrar")
     public Response registrarPeriodo(@Valid PeriodoCreationDTO dto) {
         PeriodoCreationResponseDTO periodoResponse = periodoService.registrarPeriodo(dto);
-
-        return Response.status(periodoResponse.isEstado() ? Response.Status.CREATED : Response.Status.CONFLICT).entity(Map.of(
-                "response", periodoResponse
-        )).build();
+        return Response.status(periodoResponse.isEstado() ? Response.Status.CREATED : Response.Status.CONFLICT).entity(periodoResponse).build();
     }
 
+    @PUT
+    @Path("/modificar-periodo")
+    public Response modificarPeriodo(@RequestBody PeriodoDTO periodo){
+        PeriodoEntity p = periodoService.modificarPeriodo(periodo);
+        return Response.status(Response.Status.OK).entity(p).build();
+    }
+
+    @POST
+    @Path("/general-info")
+    public Response actualizarInformacionGeneral(@RequestBody GeneralInfoAdminDTO genInfDTO){
+        return Response.status(Response.Status.CREATED).entity(generalInfoService.actualizarInfoGeneralAdmin(genInfDTO)).build();
+    }
+
+    @GET
+    @Path("/general-info")
+    public Response obtenerInformacionGeneralAdmin(){
+        return Response.status(Response.Status.CREATED).entity(generalInfoService.getGenInfoAdmin()).build();
+    }
+
+    @GET
+    @Path("/periodos")
+    public Response obtenerPeriodos(){
+        return Response.status(Response.Status.OK).entity(periodoService.findAll()).build();
+    }
+
+    /*
+    Endpoints ecommerce
+     */
     @GET
     @Path("/current-period")
     public Response getCurrentPeriod() {
@@ -89,16 +116,5 @@ public class PeriodoResource {
                 .build();
     }
 
-    @PUT
-    @Path("/modificar-periodo")
-    public Response modificarPeriodo(@RequestBody PeriodoDTO periodo){
-        PeriodoEntity p = periodoService.modificarPeriodo(periodo);
-        return Response.status(Response.Status.OK).entity(p).build();
-    }
 
-    @POST
-    @Path("/general-info")
-    public Response gardarInformacionGeneral(@RequestBody GeneralInfoAdminDTO genInfDTO){
-        return Response.status(Response.Status.CREATED).entity(generalInfoService.guardarOActualizarInfoGeneralAdmin(genInfDTO)).build();
-    }
 }

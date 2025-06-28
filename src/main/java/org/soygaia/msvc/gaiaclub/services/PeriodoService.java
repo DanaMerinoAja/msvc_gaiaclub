@@ -4,13 +4,14 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoCreationResponseDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoCreationDTO;
-import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.PeriodoDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.periodos.PeriodoCreationResponseDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.periodos.PeriodoCreationDTO;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.periodos.PeriodoDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.PeriodoEntity;
 import org.soygaia.msvc.gaiaclub.repositories.PeriodoRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Transactional
@@ -58,6 +59,17 @@ public class PeriodoService {
         periodo.setFechaFin(periodoDTO.getFechaFin());
         periodo.setFechaInicio(periodoDTO.getFechaInicio());
         return periodo;
+    }
+
+    public List<PeriodoDTO> findAll(){
+        List<PeriodoEntity> periodoEntities = periodoRepository.findAll().stream().toList();
+        return periodoEntities.stream().map(periodo -> new PeriodoDTO(
+                periodo.getFechaFin(),
+                periodo.getFechaInicio(),
+                periodo.getDescripcion(),
+                periodo.getNombre(),
+                periodo.getId())
+        ).collect(Collectors.toList());
     }
 
     public PeriodoEntity getNextPeriod() {

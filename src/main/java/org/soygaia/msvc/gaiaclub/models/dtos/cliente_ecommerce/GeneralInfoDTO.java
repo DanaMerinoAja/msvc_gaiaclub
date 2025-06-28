@@ -1,4 +1,4 @@
-package org.soygaia.msvc.gaiaclub.models.dtos;
+package org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce;
 
 public class GeneralInfoDTO {
     private double puntosPorCompra;
