@@ -33,4 +33,8 @@ public class MiembroRepository implements PanacheRepository<MiembroClubEntity> {
     """, Long.class).setParameter("periodoId", periodoId).getSingleResult();
     }
 
+    public MiembroClubEntity findByDNI(String dni){
+        return find("dni=?1", dni).firstResult();
+    }
+
 }

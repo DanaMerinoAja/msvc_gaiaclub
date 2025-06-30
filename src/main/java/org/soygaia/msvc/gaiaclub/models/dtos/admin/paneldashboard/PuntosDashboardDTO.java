@@ -7,6 +7,7 @@ public record PuntosDashboardDTO(
         long totalPuntosCanjeados,
         long totalCanjeadosHoy,
         long totalPuntosCanjeadosPeriodo,
-        long totalPuntosEmitidosPeriodo
+        long totalPuntosEmitidosPeriodo,
+        long totalPorBonificacion
 ) {}
 

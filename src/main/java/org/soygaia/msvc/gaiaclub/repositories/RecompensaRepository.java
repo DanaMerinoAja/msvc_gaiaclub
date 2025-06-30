@@ -5,8 +5,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import org.soygaia.msvc.gaiaclub.models.entity.RecompensaEntity;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 
 @ApplicationScoped
@@ -38,4 +38,10 @@ public class RecompensaRepository implements PanacheRepository<RecompensaEntity>
                 .setParameter("periodoId", periodoId).getSingleResult();
     }
 
+    public long recompensasNoCanjeadasEntreFechas(LocalDate fechaInicio, LocalDate fechaFin) {
+        return getEntityManager().createQuery("SELECT COALESCE(SUM(r.stock), 0) FROM RecompensaEntity r WHERE r.periodo.fechaInicio >= :fecha1 AND r.periodo.fechaFin <= :fecha2", Long.class)
+                .setParameter("fecha1", fechaInicio)
+                .setParameter("fecha2", fechaFin)
+                .getSingleResult();
+    }
 }

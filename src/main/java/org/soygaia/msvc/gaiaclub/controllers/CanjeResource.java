@@ -63,7 +63,7 @@ public class CanjeResource {
     @GET
     @Path("/all-canjes")
     public Response allCanjes(@QueryParam("page") @DefaultValue("0") int page,
-                              @QueryParam("size") @DefaultValue("20") int size) {
+                              @QueryParam("size") @DefaultValue("10") int size) {
         List<CanjeResumenDTO> canjes = canjeService.listaAllCanjesPaginado(page, size);
         return Response.ok(canjes).build();
     }
@@ -79,7 +79,7 @@ public class CanjeResource {
 
     @PUT
     @Path("/editar")
-    public Response detallesCanje(@RequestBody CanjeResumenDTO dto) {
+    public Response estadoCanje(@RequestBody CanjeResumenDTO dto) {
         return Response.status(Response.Status.OK).entity(canjeService.cambiarEstado(dto)).build();
     }
 }

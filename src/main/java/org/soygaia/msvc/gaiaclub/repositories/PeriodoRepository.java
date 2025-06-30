@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Transactional
 public class PeriodoRepository implements PanacheRepository<PeriodoEntity> {
     public PeriodoEntity findPeriodoActual() {
-        return find("SELECT p FROM PeriodoEntity p WHERE p.fechaInicio <= ?1 AND p.fechaFin > ?1",
+        return find("SELECT p FROM PeriodoEntity p WHERE p.fechaInicio <= ?1 AND p.fechaFin >= ?1",
                 LocalDate.now()).firstResult();
     }
 

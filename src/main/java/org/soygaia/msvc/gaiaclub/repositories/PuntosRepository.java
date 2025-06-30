@@ -64,5 +64,12 @@ public class PuntosRepository implements PanacheRepository<PuntosEntity> {
                 .getSingleResult();
     }
 
-
+    public long puntosBonificacionesEntreFechas(LocalDate fecha1, LocalDate fecha2) {
+        return getEntityManager().createQuery("SELECT COALESCE(SUM(p.totalPuntos), 0) FROM PuntosEntity p WHERE DATE(p.fechaCaducidad) >= :fecha1" +
+                        " AND DATE(p.fechaCaducidad) <= :fecha2 AND p.tipoOrigen=:tipoOrigen", Long.class)
+                .setParameter("fecha1", fecha1)
+                .setParameter("fecha2", fecha2)
+                .setParameter("tipoOrigen", PuntosEntity.TipoOrigen.BONIFICACION)
+                .getSingleResult();
+    }
 }

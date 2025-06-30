@@ -12,13 +12,11 @@ import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.GeneralIn
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.ecommerce.OrdenDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.puntos.PuntosDisponiblesDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.puntos.PuntosRegistroDTO;
+import org.soygaia.msvc.gaiaclub.models.entity.BonificacionEntity;
 import org.soygaia.msvc.gaiaclub.models.entity.GeneralInfoEntity;
 import org.soygaia.msvc.gaiaclub.models.entity.MiembroClubEntity;
 import org.soygaia.msvc.gaiaclub.models.entity.PuntosEntity;
-import org.soygaia.msvc.gaiaclub.repositories.GeneralInfoRepository;
-import org.soygaia.msvc.gaiaclub.repositories.MiembroRepository;
-import org.soygaia.msvc.gaiaclub.repositories.OrdenRepository;
-import org.soygaia.msvc.gaiaclub.repositories.PuntosRepository;
+import org.soygaia.msvc.gaiaclub.repositories.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,6 +39,9 @@ public class PuntosService {
 
     @Inject
     GeneralInfoRepository generalInfoRepository;
+
+    @Inject
+    BonificacionRepository bonificacionRepository;
 
     int mesesVigencia;
     int puntosPorCompra;
@@ -86,6 +87,28 @@ public class PuntosService {
         return puntosEntity;
     }
 
+    public String registrarPuntosBonificacion(String miembroDNI, Long bonificacionID){
+        PuntosEntity puntosEntity = new PuntosEntity();
+        try {
+            MiembroClubEntity miembro = miembroRepository.findByDNI(miembroDNI);
+            BonificacionEntity bonificacionEntity = bonificacionRepository.findById(bonificacionID);
+
+            puntosEntity.setMiembro(miembro);
+            puntosEntity.setFechaEmision(LocalDate.now());
+            puntosEntity.setFechaCaducidad(puntosEntity.getFechaEmision().plusMonths(mesesVigencia));
+            puntosEntity.setTipoOrigen(PuntosEntity.TipoOrigen.BONIFICACION);
+            puntosEntity.setTotalPuntos(bonificacionEntity.getPuntos());
+            puntosEntity.setEstado(PuntosEntity.EstadoPuntos.VIGENTE);
+            puntosEntity.setIdOrigen(bonificacionID);
+            puntosRepository.persist(puntosEntity);
+            entityManager.refresh(puntosEntity);
+            return "Se asignaron " + puntosEntity.getTotalPuntos() + " por " + bonificacionEntity.getNombre() + " a " + miembro.getNombresCompletos();
+        } catch (Exception ex) {
+            return "No se pudo registrar la operación :( \n" + ex.getMessage();
+        }
+
+    }
+
     public void registrarPuntosNuevoMiembro(MiembroClubEntity miembro){
         PuntosEntity puntosEntity = new PuntosEntity();
         puntosEntity.setMiembro(miembro);
@@ -94,7 +117,7 @@ public class PuntosService {
         puntosEntity.setTipoOrigen(PuntosEntity.TipoOrigen.BONIFICACION);
         puntosEntity.setTotalPuntos(bonificacionBienvenida);
         puntosEntity.setEstado(PuntosEntity.EstadoPuntos.VIGENTE);
-
+        puntosEntity.setIdOrigen((long)0);
         puntosRepository.persist(puntosEntity);
         entityManager.refresh(puntosEntity);
     }

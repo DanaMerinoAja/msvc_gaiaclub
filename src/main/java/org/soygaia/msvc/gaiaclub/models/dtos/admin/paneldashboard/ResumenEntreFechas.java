@@ -5,8 +5,11 @@ public record ResumenEntreFechas (
         long puntosEmitidos,
         long puntosCanjeados,
         long puntosVencidos,
+        long puntosBonificacion,
         long totalCanjes,
         long puntosCanjeadosPorCanjes,
         long valesCanjeados,
-        long valesAplicados
+        long valesAplicados,
+        long recompensasCanjeadas,
+        long recompensasNoCanjeadas
 ){}

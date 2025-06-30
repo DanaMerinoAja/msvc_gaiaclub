@@ -1,17 +1,20 @@
-package org.soygaia.msvc.gaiaclub.models.vistas;
+package org.soygaia.msvc.gaiaclub.models.entity;
 
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
 
 import java.math.BigDecimal;
 
 @Entity
 @Immutable
-@NamedQuery(
+@NamedNativeQuery(
         name = "VistaRecompense.findByPeriodo",
-        query = "SELECT * FROM gaiaadm.v_recompensas_productos_periodo WHERE rec_periodo = :periodoId"
+        query = "SELECT * FROM gaiaadm.v_recompensas_productos_periodo WHERE rec_periodo = :periodoId",
+        resultClass = VistaRecompense.class
 )
+@Subselect("SELECT * FROM gaiaadm.v_recompensas_productos_periodo")
 public class VistaRecompense {
     @Id
     private Long rec_id;

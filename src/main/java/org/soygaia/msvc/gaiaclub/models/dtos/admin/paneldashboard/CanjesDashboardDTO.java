@@ -5,5 +5,5 @@ public record CanjesDashboardDTO(
         long canjesHoy,
         long canjesPeriodoActual,
         long puntosCanjeadosPeriodo,
-        long recompensasCanjeadosPeriodo
+        long recompensasCanjeadas
 ) {}

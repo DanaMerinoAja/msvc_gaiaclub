@@ -173,6 +173,14 @@ public class CanjeService {
         CanjeEntity.EstadoCanje estadoCanje = estado.equals(CanjeEntity.EstadoCanje.ENTREGADO.toString()) ? CanjeEntity.EstadoCanje.ENTREGADO:
                 (estado.equals(CanjeEntity.EstadoCanje.CANCELADO.toString()) ? CanjeEntity.EstadoCanje.CANCELADO: CanjeEntity.EstadoCanje.POR_ENTREGAR);
 
+        if(estadoCanje.equals(CanjeEntity.EstadoCanje.CANCELADO)){
+            List<DetalleCanjeEntity> detalles = canjeEntity.getDetallesCanje();
+            for(DetalleCanjeEntity d : detalles){
+                RecompensaEntity r = d.getDcjRecompensa();
+                r.setStock(r.getStock()+d.getCantidadRecompensa());
+            }
+        }
+
         canjeEntity.setEstado(estadoCanje);
 
         dto.setEstado(canjeEntity.getEstado().toString());

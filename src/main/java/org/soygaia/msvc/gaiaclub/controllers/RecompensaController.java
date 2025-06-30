@@ -16,6 +16,7 @@ import org.soygaia.msvc.gaiaclub.services.PeriodoService;
 import org.soygaia.msvc.gaiaclub.services.RecompensaService;
 import org.soygaia.msvc.gaiaclub.services.ValesService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Path("/recompensa")
@@ -87,6 +88,14 @@ public class RecompensaController {
             return  Response.status(Response.Status.OK).entity(recompensasResponseDTOF).build();
         }
         return  Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    @GET
+    @Path("/all-recompensas")
+    public Response allRecompensas(@QueryParam("page") @DefaultValue("0") int page,
+                              @QueryParam("size") @DefaultValue("10") int size) {
+        List<RecompensaProductoDTO> recompensas = recompensaService.listaAllRecompensasPaginado(page, size);
+        return Response.ok(recompensas).build();
     }
 
 }

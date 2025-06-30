@@ -22,7 +22,7 @@ public class PuntosEntity implements Serializable {
 
     @Column(name = "pt_origen")
     private Long idOrigen;
-    //manejo de relación polimórfica
+    //manejo de relación polimórfica 0=compra 1=bonificacion
     @Column(name = "pt_tipo_origen")
     private TipoOrigen tipoOrigen;
     @Column(name = "pt_fechaemision")
@@ -139,7 +139,7 @@ public class PuntosEntity implements Serializable {
     }
 
     public enum TipoOrigen {
-        COMPRA, BONIFICACION, PROMOCION
+        COMPRA, BONIFICACION
     }
 
 }

@@ -62,6 +62,12 @@ public class CanjeRepository implements PanacheRepository<CanjeEntity> {
                 .setParameter("periodoId", periodoId).getSingleResult();
     }
 
+    public long recompensasCanjeadasEntreFechas(LocalDate fecha1, LocalDate fecha2) {
+        return getEntityManager().createQuery("SELECT COALESCE(SUM(d.cantidadRecompensa), 0) FROM CanjeEntity c JOIN c.detallesCanje d WHERE c.fecha >= :fecha1 AND c.fecha <= :fecha2", Long.class)
+                .setParameter("fecha1", fecha1)
+                .setParameter("fecha2", fecha2).getSingleResult();
+    }
+
     public long totalCanjesEntreFechas(LocalDate fecha1, LocalDate fecha2) {
         return count("fecha >= ?1 AND fecha <= ?2", fecha1, fecha2);
     }
@@ -71,5 +77,4 @@ public class CanjeRepository implements PanacheRepository<CanjeEntity> {
                 .setParameter("fecha1", fecha1)
                 .setParameter("fecha2", fecha2).getSingleResult();
     }
-
 }

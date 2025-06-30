@@ -25,7 +25,7 @@ public class PeriodoEntity implements Serializable {
     private String nombre;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "periodo", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "periodo", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<RecompensaEntity> recompensaList;
 
 

@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.soygaia.msvc.gaiaclub.models.dtos.admin.panelcanjes.CanjeResumenDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.recompensas.DeleteResponse;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.recompensas.RecompensaPostDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.recompensas.RecompensaPutDTO;
@@ -102,20 +103,6 @@ public class RecompensaService {
         return new DeleteResponse(recompensaId, "Recompensa eliminada", true);
     }
 
-
-    private boolean esViolacionDeClaveForanea(Exception e) {
-        Throwable causa = e;
-        while (causa != null) {
-            if (causa instanceof org.hibernate.exception.ConstraintViolationException constraintEx) {
-                String msg = constraintEx.getMessage();
-                return msg != null && msg.contains("violates foreign key constraint");
-            }
-            causa = causa.getCause();
-        }
-        return false;
-    }
-
-
     public List<RecompensaProductoDTO> recompensasPeriodoActual(){
         PeriodoEntity periodo = periodoRepository.findPeriodoActual();
         if(periodo != null){
@@ -130,5 +117,12 @@ public class RecompensaService {
 
     public List<RecompensaEntity> recompensasDisponibles(Long idPeriodo) {
         return recompensaRepository.recompensasPeriodo(idPeriodo);
+    }
+
+    public List<RecompensaProductoDTO> listaAllRecompensasPaginado(int page, int size) {
+        if(page>1 && (long) page *size > vistaRecompensaRepository.count()){
+            return new ArrayList<>();
+        }
+        return vistaRecompensaRepository.findAllDTOs(page, size);
     }
 }

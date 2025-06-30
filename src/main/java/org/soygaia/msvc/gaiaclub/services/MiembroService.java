@@ -124,7 +124,6 @@ public class MiembroService {
 
     public MiembroGetDTO editarMiembro(MiembroGetDTO miembro){
         MiembroClubEntity miembroClub = miembroRepository.findById(miembro.getIdMiembro());
-        miembroClub.setDni(miembro.getDni());
         miembroClub.setNombresCompletos(miembro.getNombresCompletos());
         miembroClub.setCorreo(miembro.getCorreo());
         miembroClub.setTelefono(miembro.getTelefono());

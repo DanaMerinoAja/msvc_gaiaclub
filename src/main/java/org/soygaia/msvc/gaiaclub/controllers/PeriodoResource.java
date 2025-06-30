@@ -40,10 +40,9 @@ public class PeriodoResource {
     }
 
     @PUT
-    @Path("/modificar-periodo")
-    public Response modificarPeriodo(@RequestBody PeriodoDTO periodo){
-        PeriodoEntity p = periodoService.modificarPeriodo(periodo);
-        return Response.status(Response.Status.OK).entity(p).build();
+    @Path("/modificar-periodo-{idPeriodo}")
+    public Response modificarPeriodo(@RequestBody @Valid PeriodoCreationDTO periodo, @PathParam("idPeriodo") Long periodoId){
+        return Response.status(Response.Status.OK).entity(periodoService.modificarPeriodo(periodo, periodoId)).build();
     }
 
     @POST
@@ -116,5 +115,9 @@ public class PeriodoResource {
                 .build();
     }
 
-
+    @DELETE
+    @Path("/eliminar-{idPeriodo}")
+    public Response eliminarPeriodo(@PathParam("idPeriodo") Long idPeriodo){
+        return Response.status(Response.Status.OK).entity(periodoService.eliminarPeriodo(idPeriodo)).build();
+    }
 }

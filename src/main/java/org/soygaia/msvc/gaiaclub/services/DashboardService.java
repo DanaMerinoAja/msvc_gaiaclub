@@ -50,15 +50,8 @@ public class DashboardService {
                 puntosRepo.totalPuntosCanjeados(),
                 puntosRepo.totalPuntosCanjeadosHoy(),
                 pe != null ? puntosRepo.puntosCanjeadosEntreFechas(pe.getFechaInicio(), pe.getFechaFin()) : 0,
-                pe != null ? puntosRepo.puntosEmitidosEntreFechas(pe.getFechaInicio(), pe.getFechaFin()) : 0
-        );
-    }
-
-    public PuntosEntreFechasDTO obtenerPuntosEntreFechas(LocalDate fecha1, LocalDate fecha2) {
-        return new PuntosEntreFechasDTO(
-                puntosRepo.puntosEmitidosEntreFechas(fecha1, fecha2),
-                puntosRepo.puntosCanjeadosEntreFechas(fecha1, fecha2),
-                puntosRepo.puntosVencidosEntreFechas(fecha1, fecha2)
+                pe != null ? puntosRepo.puntosEmitidosEntreFechas(pe.getFechaInicio(), pe.getFechaFin()) : 0,
+                pe != null ? puntosRepo.puntosBonificacionesEntreFechas(pe.getFechaInicio(), pe.getFechaFin()) : 0
         );
     }
 
@@ -71,16 +64,10 @@ public class DashboardService {
                 canjeRepo.canjesPorFecha(hoy),
                 periodoId != 0 ? canjeRepo.totalCanjesPeriodo(periodoId) : 0,
                 periodoId != 0 ? canjeRepo.puntosCanjeadosPeriodo(periodoId) : 0,
-                periodoId != 0 ? canjeRepo.recompensasCanjeadasPeriodo(periodoId) : 0
+                periodoId != 0 ? canjeRepo.recompensasCanjeadasEntreFechas(periodo.getFechaInicio(), periodo.getFechaFin()) : 0
         );
     }
 
-    public CanjesEntreFechasDTO obtenerCanjesEntreFechas(LocalDate fecha1, LocalDate fecha2) {
-        return new CanjesEntreFechasDTO(
-                canjeRepo.totalCanjesEntreFechas(fecha1, fecha2),
-                canjeRepo.puntosCanjeadosEntreFechas(fecha1, fecha2)
-        );
-    }
 
     public RecompensasDashboardDTO obtenerRecompensas(int limite) {
         PeriodoEntity periodo = periodoService.getCurrentPeriod();
@@ -111,10 +98,13 @@ public class DashboardService {
                 puntosRepo.puntosEmitidosEntreFechas(fechaInicio, fechaFin),
                 puntosRepo.puntosCanjeadosEntreFechas(fechaInicio, fechaFin),
                 puntosRepo.puntosVencidosEntreFechas(fechaInicio, fechaFin),
+                puntosRepo.puntosBonificacionesEntreFechas(fechaInicio, fechaFin),
                 canjeRepo.totalCanjesEntreFechas(fechaInicio, fechaFin),
                 canjeRepo.puntosCanjeadosEntreFechas(fechaInicio, fechaFin),
                 valeClienteRepository.contarValesCanjeadosPeriodoEntreFechas(fechaInicio, fechaFin),
-                valeClienteRepository.contarValesAplicadosPeriodoEntreFechas(fechaInicio, fechaFin)
+                valeClienteRepository.contarValesAplicadosPeriodoEntreFechas(fechaInicio, fechaFin),
+                canjeRepo.recompensasCanjeadasEntreFechas(fechaInicio, fechaFin),
+                recompensaRepo.recompensasNoCanjeadasEntreFechas(fechaInicio, fechaFin)
         );
     }
 
