@@ -32,6 +32,7 @@ public class BonificacionService {
         bonificacionEntity.setFechaCreacion(LocalDateTime.now());
         bonificacionEntity.setActiva(true);
         bonificacionRepository.persist(bonificacionEntity);
+        bonificacionRepository.flush();
         bonificacionEntity.setBonificacionOrigen(bonificacionEntity);
         return toDTO(bonificacionEntity);
     }
@@ -115,4 +116,9 @@ public class BonificacionService {
         }
     }
 
+    public List<BonificacionDTO> getBonificacionesActivas() {
+        return bonificacionRepository.find("activa", true).stream().map(b -> {
+                    return new BonificacionDTO(b.getNombre(), b.getDescripcion(), b.getPuntos());
+                }).toList();
+    }
 }

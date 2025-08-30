@@ -1,9 +1,6 @@
 package org.soygaia.msvc.gaiaclub.models.dtos.admin.bonificaciones;
 
-import java.security.PrivilegedAction;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
 public class BonificacionDTO {
 
@@ -14,13 +11,22 @@ public class BonificacionDTO {
     private boolean activa;
     private LocalDateTime fechaCreacion;
 
-    public BonificacionDTO(Long id, String nombre,String descripcion, Integer puntos, boolean activa, LocalDateTime fechaCreacion) {
+    public BonificacionDTO() {
+    }
+
+    public BonificacionDTO(Long id, String nombre, String descripcion, Integer puntos, boolean activa, LocalDateTime fechaCreacion) {
         this.id = id;
         this.descripcion = descripcion;
         this.nombre = nombre;
         this.puntos = puntos;
         this.activa = activa;
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public BonificacionDTO(String nombre,String descripcion, Integer puntos) {
+        this.descripcion = descripcion;
+        this.nombre = nombre;
+        this.puntos = puntos;
     }
 
     public Long getId() {

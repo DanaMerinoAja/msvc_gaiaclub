@@ -64,4 +64,13 @@ public class BonificacionResource {
         return Response.status(Response.Status.OK).entity(service.setEstadoBonificacion(idBonificacion)).build();
     }
 
+    /*
+    Bonificaciones ecommerce
+     */
+
+    @GET
+    @Path("activas-cliente")
+    public Response getBonificacionesActivas(){
+        return Response.status(Response.Status.OK).entity(service.getBonificacionesActivas()).build();
+    }
 }

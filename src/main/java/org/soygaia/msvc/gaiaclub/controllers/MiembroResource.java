@@ -44,7 +44,6 @@ public class MiembroResource {
 
     @GET
     @Path("/admin")
-    //aún no se como funciona ;) @RequestScoped
     public Response obtenerClientesAdmin(){
         return Response.status(Response.Status.OK).entity(miembroService.obtenerMiembros()).build();
     }

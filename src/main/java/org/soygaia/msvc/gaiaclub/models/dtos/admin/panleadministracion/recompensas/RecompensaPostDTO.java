@@ -3,12 +3,21 @@ package org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.recompen
 public class RecompensaPostDTO {
 
     private Long idProducto;
+    private Long idRecompensa;
     private Long idPeriodo;
     private Double aporteSoles;
     private Integer puntosRequeridos;
     private Integer stock;
     private String descripcion;
     private String nombre;
+
+    public Long getIdRecompensa() {
+        return idRecompensa;
+    }
+
+    public void setIdRecompensa(Long idRecompensa) {
+        this.idRecompensa = idRecompensa;
+    }
 
     public Long getIdProducto() {
         return idProducto;

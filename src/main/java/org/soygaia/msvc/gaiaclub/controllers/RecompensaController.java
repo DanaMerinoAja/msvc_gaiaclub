@@ -68,11 +68,27 @@ public class RecompensaController {
     @GET
     @Path("/recompensas-periodo/{periodoId}")
     public Response obtenerRecompensasProducto(@PathParam("periodoId")Long periodoId){
-        Optional<PeriodoEntity> optionalPeriodo = Optional.ofNullable(periodoService.getCurrentPeriod());
-        if(optionalPeriodo.isPresent()) {
-            return  Response.status(Response.Status.OK).entity(recompensaService.recompensasPeriodo(periodoId)).build();
-        }
-        return  Response.status(Response.Status.NOT_FOUND).build();
+        return  Response.status(Response.Status.OK).entity(recompensaService.recompensasPeriodo(periodoId)).build();
+    }
+
+    @GET
+    @Path("/buscar-sku-nombre")
+    public Response buscarRec(@QueryParam("term") String termino){
+        return Response.status(Response.Status.OK).entity(recompensaService.buscarRec(termino)).build();
+    }
+
+    @GET
+    @Path("/no-periodo")
+    public Response noPeriodo(@QueryParam("periodo") Long periodoId){
+        return Response.status(Response.Status.OK).entity(recompensaService.noPeriodo(periodoId)).build();
+    }
+
+    @GET
+    @Path("/all-recompensas")
+    public Response allRecompensas(@QueryParam("page") @DefaultValue("0") int page,
+                                   @QueryParam("size") @DefaultValue("10") int size) {
+        List<RecompensaProductoDTO> recompensas = recompensaService.listaAllRecompensasPaginado(page, size);
+        return Response.ok(recompensas).build();
     }
 
     /*
@@ -89,13 +105,4 @@ public class RecompensaController {
         }
         return  Response.status(Response.Status.NOT_FOUND).build();
     }
-
-    @GET
-    @Path("/all-recompensas")
-    public Response allRecompensas(@QueryParam("page") @DefaultValue("0") int page,
-                              @QueryParam("size") @DefaultValue("10") int size) {
-        List<RecompensaProductoDTO> recompensas = recompensaService.listaAllRecompensasPaginado(page, size);
-        return Response.ok(recompensas).build();
-    }
-
 }

@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.hibernate.service.spi.ServiceException;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panelcanjes.CanjeResumenDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.recompensas.DeleteResponse;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.recompensas.RecompensaPostDTO;
@@ -43,6 +44,7 @@ public class RecompensaService {
 
     // Guarda solo recompensas tipo PRODUCTO
     public RecompensaResponseDTO guardarRecompensa(RecompensaPostDTO recompensaPostDTO) {
+
         // Verificar duplicados
         Optional<RecompensaEntity> recompensaExiste = recompensaRepository.find(
                 "SELECT r FROM RecompensaEntity r WHERE r.periodo.id = ?1 AND r.productoId = ?2",
@@ -51,12 +53,14 @@ public class RecompensaService {
         ).firstResultOptional();
 
         if (recompensaExiste.isPresent()) {
-            return new RecompensaResponseDTO(recompensaExiste.get(), null, false);
+            return new RecompensaResponseDTO(vistaRecompensaRepository.findByIdRec(recompensaExiste.get().getRecId()), null, false);
         }
 
         RecompensaEntity recompensaCreada = new RecompensaEntity();
-        recompensaCreada.setAporteSoles(recompensaPostDTO.getAporteSoles());
+
+        //establecemos el id del producto relacionado a la recompensa
         recompensaCreada.setProductoId(recompensaPostDTO.getIdProducto());
+        recompensaCreada.setAporteSoles(recompensaPostDTO.getAporteSoles());
         recompensaCreada.setNombre(recompensaPostDTO.getNombre());
         recompensaCreada.setDescripcion(recompensaPostDTO.getDescripcion());
         recompensaCreada.setStock(recompensaPostDTO.getStock());
@@ -64,7 +68,10 @@ public class RecompensaService {
         recompensaCreada.setPeriodo(periodoRepository.findById(recompensaPostDTO.getIdPeriodo()));
 
         recompensaRepository.persist(recompensaCreada);
-        return new RecompensaResponseDTO(null, recompensaCreada, true);
+        //actualizar los valores de recompensaCreada:
+        entityManager.flush();
+
+        return new RecompensaResponseDTO(null, vistaRecompensaRepository.findByIdRec(recompensaCreada.getRecId()), true);
     }
 
     public RecompensaProductoDTO actualizarRecompensa(RecompensaPutDTO recompensaDTO){
@@ -75,6 +82,8 @@ public class RecompensaService {
         recompensaEntity.setDescripcion(recompensaDTO.getDescripcion());
         recompensaEntity.setAporteSoles(recompensaDTO.getAporteSoles());
         recompensaEntity.setPuntosRequeridos(recompensaDTO.getPuntosRequeridos());
+
+        vistaRecompensaRepository.flush();
 
         return vistaRecompensaRepository.findByIdRec(recompensaEntity.getRecId());
     }
@@ -124,5 +133,13 @@ public class RecompensaService {
             return new ArrayList<>();
         }
         return vistaRecompensaRepository.findAllDTOs(page, size);
+    }
+
+    public List<RecompensaProductoDTO> buscarRec(String termino){
+        return vistaRecompensaRepository.findBySkuOrNombre(termino);
+    }
+
+    public List<RecompensaProductoDTO> noPeriodo(Long periodoId) {
+        return vistaRecompensaRepository.findAllMenosPeriodo(periodoId);
     }
 }

@@ -1,31 +1,32 @@
 package org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.recompensas;
 
+import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.recompensas.productos.RecompensaProductoDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.RecompensaEntity;
 
 public class RecompensaResponseDTO {
-    private RecompensaEntity recompensasExiste;
-    private RecompensaEntity recompensaCreada;
+    private RecompensaProductoDTO recompensasExiste;
+    private RecompensaProductoDTO recompensaCreada;
     private boolean creada;
 
-    public RecompensaResponseDTO(RecompensaEntity recompensasExiste, RecompensaEntity recompensaCreada, boolean creada) {
+    public RecompensaResponseDTO(RecompensaProductoDTO recompensasExiste, RecompensaProductoDTO recompensaCreada, boolean creada) {
         this.recompensasExiste = recompensasExiste;
         this.recompensaCreada = recompensaCreada;
         this.creada = creada;
     }
 
-    public RecompensaEntity getRecompensasExiste() {
+    public RecompensaProductoDTO getRecompensasExiste() {
         return recompensasExiste;
     }
 
-    public void setRecompensasExiste(RecompensaEntity recompensasExiste) {
+    public void setRecompensasExiste(RecompensaProductoDTO recompensasExiste) {
         this.recompensasExiste = recompensasExiste;
     }
 
-    public RecompensaEntity getRecompensaCreada() {
+    public RecompensaProductoDTO getRecompensaCreada() {
         return recompensaCreada;
     }
 
-    public void setRecompensaCreada(RecompensaEntity recompensaCreada) {
+    public void setRecompensaCreada(RecompensaProductoDTO recompensaCreada) {
         this.recompensaCreada = recompensaCreada;
     }
 

@@ -11,6 +11,7 @@ import org.soygaia.msvc.gaiaclub.models.entity.VistaRecompense;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -21,16 +22,18 @@ public class VistaRecompensaRepository implements PanacheRepository<VistaRecompe
 
     public List<RecompensaProductoDTO> findByPeriodo(Long periodoId) {
 
-        List<VistaRecompense> lista = entityManager
-                .createNamedQuery("VistaRecompense.findByPeriodo", VistaRecompense.class)
-                .setParameter("periodoId", periodoId)
-                .getResultList();
-
-        return lista.stream().map(this::toRecompensaProductoDTO).collect(Collectors.toList());
+        return find("rec_periodo", periodoId).stream()
+                .map(this::toRecompensaProductoDTO).collect(Collectors.toList());
     }
 
     public RecompensaProductoDTO findByIdRec(Long recompensaId) {
         return  toRecompensaProductoDTO(findById(recompensaId));
+    }
+
+    public Long findBySkuProdAndPeriodo(String sku, Long periodoID) {
+        return Optional.ofNullable(find("prd_sku=?1 AND rec_periodo=?2", sku, periodoID).firstResult())
+                .map(result -> ((VistaRecompense) result).getRec_id())
+                .orElse(null);
     }
 
     public List<RecompensaProductoDTO> findAllDTOs(int pagina, int tamanoPagina){
@@ -64,4 +67,15 @@ public class VistaRecompensaRepository implements PanacheRepository<VistaRecompe
         );
     }
 
+    public List<RecompensaProductoDTO> findBySkuOrNombre(String termino) {
+        return entityManager.createQuery("SELECT r FROM VistaRecompense r WHERE prd_sku=:termino OR LOWER(r.prd_nombre) LIKE :termino OR LOWER(r.rec_nombre) LIKE :termino", VistaRecompense.class)
+                .setParameter("termino", '%'+termino+'%')
+                .getResultList().stream().map(this::toRecompensaProductoDTO).toList();
+    }
+
+    public List<RecompensaProductoDTO> findAllMenosPeriodo(Long periodoId) {
+        return entityManager.createQuery("SELECT r FROM VistaRecompense r WHERE rec_periodo!=:periodoId", VistaRecompense.class)
+                .setParameter("periodoId", periodoId)
+                .getResultList().stream().map(this::toRecompensaProductoDTO).toList();
+    }
 }
