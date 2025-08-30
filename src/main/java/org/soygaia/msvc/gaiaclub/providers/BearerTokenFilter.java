@@ -17,6 +17,7 @@ public class BearerTokenFilter implements ClientRequestFilter {
 
         // Solo propaga si el request entrante traía un token válido
         String token = jwt.getRawToken();
+        System.out.println(token);
         if (jwt != null && token!=null) {
             ctx.getHeaders().putSingle("Authorization", "Bearer " + token);
         }
