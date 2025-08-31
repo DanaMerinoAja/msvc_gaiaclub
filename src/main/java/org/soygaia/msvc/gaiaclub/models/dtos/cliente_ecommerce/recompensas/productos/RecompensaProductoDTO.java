@@ -23,6 +23,10 @@ public class RecompensaProductoDTO {
     private String [] imagenUrl;
     private String cantidadMedida;
 
+    public RecompensaProductoDTO() {
+
+    }
+
     // Constructor
     public String getCantidadMedida() {
         return cantidadMedida;
@@ -195,5 +199,8 @@ public class RecompensaProductoDTO {
         if (imagenUrls != null && !imagenUrls.isBlank()) {
             this.imagenUrl = imagenUrls.split(",");
         }
+    }
+    public void setImagenUrl(String[] imagenUrls) {
+        this.imagenUrl = imagenUrls;
     }
 }
