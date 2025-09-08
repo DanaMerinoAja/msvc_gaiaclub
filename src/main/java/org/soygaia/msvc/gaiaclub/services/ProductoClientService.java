@@ -58,7 +58,7 @@ public class ProductoClientService {
             }
 
         } catch (Exception ex) {
-            System.out.println("Excepción atrapada en ProductClientService: " + ex.getMessage() +"\n");
+            System.out.println("Excepción atrapada en ProductClientService: " + ex.getMessage() + "\n"+ex.getLocalizedMessage()+"\n");
 
         }finally {
             httpClient.close();

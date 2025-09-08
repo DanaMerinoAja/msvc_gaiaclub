@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.soygaia.msvc.gaiaclub.config.properties.Constantes;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.miembro.MiembroGetDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.miembro.MiembroRegistroDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.MiembroClubEntity;
@@ -25,12 +26,6 @@ public class MiembroService {
     MiembroRepository miembroRepository;
     @Inject
     PuntosService puntosService;
-    @PersistenceContext
-    EntityManager entityManager;
-//
-//    public List<MiembroResumenDTO> listarMiembrosConResumen(){
-//
-//    }
 
 
     public MiembroGetDTO registrarMiembro(MiembroRegistroDTO miembro){
@@ -62,7 +57,7 @@ public class MiembroService {
             miembroGetDTO.setFechaRegistro(miembroClubEntity.getFechaRegistro());
             miembroGetDTO.setClienteId(miembroClubEntity.getClienteId());
             miembroGetDTO.setPuntosCercaVencer(0);
-            miembroGetDTO.setPuntosDisponibles(puntosService.bonificacionBienvenida);
+            miembroGetDTO.setPuntosDisponibles(Constantes.bonificacionBienvenida);
         } else {
             miembroClubEntity = opMiembro.get();
 

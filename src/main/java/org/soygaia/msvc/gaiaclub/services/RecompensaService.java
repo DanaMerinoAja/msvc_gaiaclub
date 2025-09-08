@@ -124,10 +124,6 @@ public class RecompensaService {
         return vistaRecompensaRepository.findByPeriodo(idPeriodo);
     }
 
-    public List<RecompensaEntity> recompensasDisponibles(Long idPeriodo) {
-        return recompensaRepository.recompensasPeriodo(idPeriodo);
-    }
-
     public List<RecompensaProductoDTO> listaAllRecompensasPaginado(int page, int size) {
         if(page>1 && (long) page *size > vistaRecompensaRepository.count()){
             return new ArrayList<>();

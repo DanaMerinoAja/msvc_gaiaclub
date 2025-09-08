@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import net.bytebuddy.asm.Advice;
 import org.soygaia.msvc.gaiaclub.models.entity.PuntosEntity;
 
 import java.time.LocalDate;
@@ -72,4 +73,9 @@ public class PuntosRepository implements PanacheRepository<PuntosEntity> {
                 .setParameter("tipoOrigen", PuntosEntity.TipoOrigen.BONIFICACION)
                 .getSingleResult();
     }
+
+    public long caducarVigentes(){
+        return update("estado =?1 where estado = ?2 and fechaCaducidad < ?3", PuntosEntity.EstadoPuntos.CADUCADO, PuntosEntity.EstadoPuntos.VIGENTE, LocalDate.now());
+    }
+
 }

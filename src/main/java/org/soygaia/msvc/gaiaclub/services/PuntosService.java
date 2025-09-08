@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hibernate.service.spi.ServiceException;
+import org.soygaia.msvc.gaiaclub.config.properties.Constantes;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panelcliente.PuntoMovimientoDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.GeneralInfoAdminDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.ecommerce.OrdenDTO;
@@ -43,37 +44,19 @@ public class PuntosService {
     @Inject
     BonificacionRepository bonificacionRepository;
 
-    int mesesVigencia;
-    int puntosPorCompra;
-    double valorCompra;
-    int bonificacionBienvenida;
-    int alertVencimiento;
-
-    public PuntosService(){
-        GeneralInfoRepository gi=new GeneralInfoRepository();
-        GeneralInfoEntity generalInfo = gi.findAll(Sort.descending("id")).firstResult();
-        mesesVigencia = generalInfo.getPuntosVigenciaMeses();
-        puntosPorCompra = generalInfo.getPuntosPorCompra();
-        valorCompra = generalInfo.getValorCompra();
-        bonificacionBienvenida = generalInfo.getPuntosBienvenida();
-        alertVencimiento = generalInfo.getAlertaVencimiento();
-    }
-
     public PuntosEntity registrarPuntosIn(PuntosRegistroDTO puntos){
 
         PuntosEntity puntosEntity = new PuntosEntity();
         puntosEntity.setMiembro(miembroRepository.findById(puntos.getIdCliente()));
         puntosEntity.setFechaEmision(LocalDate.now());
-        puntosEntity.setFechaCaducidad(puntosEntity.getFechaEmision().plusMonths(mesesVigencia));
+        puntosEntity.setFechaCaducidad(puntosEntity.getFechaEmision().plusMonths(Constantes.mesesVigencia));
         puntosEntity.setEstado(PuntosEntity.EstadoPuntos.VIGENTE);
 
         try {
             if(puntos.getTipoOrigen().equals(PuntosEntity.TipoOrigen.COMPRA.toString())){
                 OrdenDTO ordenDTO = ordenRepository.findOrdenId(puntos.getIdOrigen());
-                puntosEntity.setTotalPuntos((int) (ordenDTO.getTotal()/valorCompra*puntosPorCompra));
+                puntosEntity.setTotalPuntos((int) (ordenDTO.getTotal()/Constantes.valorCompra*Constantes.puntosPorCompra));
                 puntosEntity.setTipoOrigen(PuntosEntity.TipoOrigen.COMPRA);
-            } else if(puntos.getTipoOrigen().equals(PuntosEntity.TipoOrigen.BONIFICACION.toString())){
-
             }
         } catch (Exception ex){
             throw new ServiceException("Error en el registro: " + ex.getMessage());
@@ -95,7 +78,7 @@ public class PuntosService {
 
             puntosEntity.setMiembro(miembro);
             puntosEntity.setFechaEmision(LocalDate.now());
-            puntosEntity.setFechaCaducidad(puntosEntity.getFechaEmision().plusMonths(mesesVigencia));
+            puntosEntity.setFechaCaducidad(puntosEntity.getFechaEmision().plusMonths(Constantes.mesesVigencia));
             puntosEntity.setTipoOrigen(PuntosEntity.TipoOrigen.BONIFICACION);
             puntosEntity.setTotalPuntos(bonificacionEntity.getPuntos());
             puntosEntity.setEstado(PuntosEntity.EstadoPuntos.VIGENTE);
@@ -113,9 +96,9 @@ public class PuntosService {
         PuntosEntity puntosEntity = new PuntosEntity();
         puntosEntity.setMiembro(miembro);
         puntosEntity.setFechaEmision(LocalDate.now());
-        puntosEntity.setFechaCaducidad(puntosEntity.getFechaEmision().plusMonths(mesesVigencia));
+        puntosEntity.setFechaCaducidad(puntosEntity.getFechaEmision().plusMonths(Constantes.mesesVigencia));
         puntosEntity.setTipoOrigen(PuntosEntity.TipoOrigen.BONIFICACION);
-        puntosEntity.setTotalPuntos(bonificacionBienvenida);
+        puntosEntity.setTotalPuntos(Constantes.bonificacionBienvenida);
         puntosEntity.setEstado(PuntosEntity.EstadoPuntos.VIGENTE);
         puntosEntity.setIdOrigen((long)0);
         puntosRepository.persist(puntosEntity);
@@ -135,7 +118,7 @@ public class PuntosService {
                         "SELECT SUM(p.totalPuntos) FROM PuntosEntity p WHERE p.estado = 'VIGENTE' AND p.miembro.id = :miembroId AND p.fechaCaducidad <= :alertaVencimiento",
                         Long.class)
                 .setParameter("miembroId", miembroId)
-                .setParameter("alertaVencimiento", LocalDate.now().plusDays(alertVencimiento))
+                .setParameter("alertaVencimiento", LocalDate.now().plusDays(Constantes.alertVencimiento))
                 .getSingleResult();
     }
 
@@ -215,6 +198,10 @@ public class PuntosService {
                         )
                 )
                 .collect(Collectors.toList());
+    }
+
+    public void revisarVigencia(){
+        puntosRepository.caducarVigentes();
     }
 
 }

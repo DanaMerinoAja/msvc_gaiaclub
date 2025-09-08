@@ -4,6 +4,7 @@ import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.soygaia.msvc.gaiaclub.config.properties.Constantes;
 import org.soygaia.msvc.gaiaclub.models.dtos.cliente_ecommerce.GeneralInfoDTO;
 import org.soygaia.msvc.gaiaclub.models.dtos.admin.panleadministracion.GeneralInfoAdminDTO;
 import org.soygaia.msvc.gaiaclub.models.entity.GeneralInfoEntity;
@@ -39,6 +40,16 @@ public class GeneralInfoService {
         entity.setAlertaVencimiento(genInfDTO.getAlertaVencimiento());
 
         generalInfoRepository.persist(entity);
+
+        generalInfoRepository.flush();
+
+        //actualizamos las variables generales con los nuevos valores
+        GeneralInfoEntity generalInfo = generalInfoRepository.findAll(Sort.descending("id")).firstResult();
+        Constantes.mesesVigencia = generalInfo.getPuntosVigenciaMeses();
+        Constantes.puntosPorCompra = generalInfo.getPuntosPorCompra();
+        Constantes.valorCompra = generalInfo.getValorCompra();
+        Constantes.bonificacionBienvenida = generalInfo.getPuntosBienvenida();
+        Constantes.alertVencimiento = generalInfo.getAlertaVencimiento();
 
         return entity;
     }
