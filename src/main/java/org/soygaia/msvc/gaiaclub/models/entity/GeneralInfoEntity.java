@@ -29,6 +29,7 @@ public class GeneralInfoEntity {
   @Column(name = "gi_fechaActualizacion",nullable = false)
   private LocalDate fechaActualizacion;
 
+  //alerta de vencimiento 15 *días* antes del vencimiento del punto
   @Column(name = "gi_alerta_vencimiento",nullable = false)
   private int alertaVencimiento;
 
