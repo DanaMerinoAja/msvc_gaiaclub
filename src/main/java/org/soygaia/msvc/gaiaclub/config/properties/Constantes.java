@@ -22,13 +22,13 @@ public class Constantes {
     @Inject
     GeneralInfoRepository gi;
 
-    @PostConstruct
-    void inicializar(){
+    public Constantes(){
         GeneralInfoEntity generalInfo = gi.findAll(Sort.descending("id")).firstResult();
         mesesVigencia = generalInfo.getPuntosVigenciaMeses();
         puntosPorCompra = generalInfo.getPuntosPorCompra();
         valorCompra = generalInfo.getValorCompra();
         bonificacionBienvenida = generalInfo.getPuntosBienvenida();
         alertVencimiento = generalInfo.getAlertaVencimiento();
+        System.out.println("Se inicializaron las cosas: " + bonificacionBienvenida);
     }
 }
