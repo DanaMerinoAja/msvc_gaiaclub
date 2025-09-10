@@ -129,6 +129,7 @@ public class PeriodoService {
                 periodo.setRecompensaList(aux);
                 return new DeleteResponse(periodoId, "No se pudo eliminar el periodo porque tiene recompensas canjeadas. Pruebe inabilitar el periodo.", false);
             }
+            periodoRepository.delete(periodo);
             return new DeleteResponse(periodoId, "Periodo eliminado correctamente.", true);
         }
 

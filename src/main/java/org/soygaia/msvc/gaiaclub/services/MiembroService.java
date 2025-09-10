@@ -47,6 +47,7 @@ public class MiembroService {
             miembroClubEntity.setFechaRegistro(LocalDate.now());
 
             miembroRepository.persist(miembroClubEntity);
+            miembroRepository.flush();
             puntosService.registrarPuntosNuevoMiembro(miembroClubEntity);
 
             miembroGetDTO.setIdMiembro(miembroClubEntity.getId());
