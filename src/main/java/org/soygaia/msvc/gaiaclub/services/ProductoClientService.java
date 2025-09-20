@@ -33,7 +33,7 @@ public class ProductoClientService {
 
         HttpGet httpGet = new HttpGet(Constantes.apiProductos+"?pageSize="+size+"&?currentPage=&"+page+"?search="+search);
         httpGet.addHeader("content-type", "application/json");
-        httpGet.addHeader("Authorization", token);
+        httpGet.addHeader("Authorizationq", token);
 
         try {
             CloseableHttpResponse response = httpClient.execute(httpGet);

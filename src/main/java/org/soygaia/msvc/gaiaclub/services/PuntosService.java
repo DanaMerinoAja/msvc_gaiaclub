@@ -67,6 +67,7 @@ public class PuntosService {
 
         puntosRepository.persist(puntosEntity);
 
+
         return puntosEntity;
     }
 
