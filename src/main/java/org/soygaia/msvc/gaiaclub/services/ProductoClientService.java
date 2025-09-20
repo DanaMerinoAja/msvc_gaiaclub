@@ -28,9 +28,6 @@ public class ProductoClientService {
     JsonWebToken jwt;
     public List<RecompensaProductoDTO> getProductos(int size, int page, String search) throws IOException {
         String token = "Bearer "+ jwt.getRawToken();
-        // ?pageSize=&currentPage=&search=&orderBy=
-
-        //System.out.println("*********************************\nToken  en el service:\n********************************\n" + token);
 
         CloseableHttpClient httpClient = HttpClientBuilder.create().disableContentCompression().build();
 
@@ -41,11 +38,9 @@ public class ProductoClientService {
         try {
             CloseableHttpResponse response = httpClient.execute(httpGet);
 
-            //System.out.println(httpClient.toString());
             HttpEntity entity = response.getEntity();
 
             String responseBody = EntityUtils.toString(entity, "UTF-8");
-            //System.out.println("JSON obtenido: "+ responseBody.toString());
 
             response.close();
 
