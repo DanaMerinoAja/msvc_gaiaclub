@@ -1,12 +1,14 @@
 package org.soygaia.msvc.gaiaclub.config.properties;
 
 import io.quarkus.panache.common.Sort;
+import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.soygaia.msvc.gaiaclub.models.entity.GeneralInfoEntity;
 import org.soygaia.msvc.gaiaclub.repositories.GeneralInfoRepository;
 
+@Startup
 @ApplicationScoped
 public class Constantes {
 
@@ -22,7 +24,8 @@ public class Constantes {
     @Inject
     GeneralInfoRepository gi;
 
-    public Constantes(){
+    @PostConstruct
+    void init(){
         GeneralInfoEntity generalInfo = gi.findAll(Sort.descending("id")).firstResult();
         mesesVigencia = generalInfo.getPuntosVigenciaMeses();
         puntosPorCompra = generalInfo.getPuntosPorCompra();
